@@ -68,6 +68,15 @@ function push!(ents::Entries, modulename::Module, obj, ent::Entry)
     push!(ents.entries, (modulename, obj, ent))
 end
 
+type Entries
+    entries::Vector{(Module, Any, Entry)}
+end
+Entries() = Entries((Module, Any, Entry)[])
+
+function push!(ents::Entries, modulename::Module, obj, ent::Entry)
+    push!(ents.entries, (modulename, obj, ent))
+end
+
 # Dispatch container for metadata display.
 type Meta{keyword}
     content
