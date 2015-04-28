@@ -6,79 +6,60 @@ User adjustable Lexicon configuration.
 
 * `category_order`      (default: `[:module, :function, :method, :type, :typealias, :macro, :global, :comment]`)
   Categories  to include in the output in the defined order.
+  *Index save uses the settings each document was saved with.*
 
-  *API-Index `save` ignores this:* and uses the setting each module was saved with.
 * `include_internal`    (default: `true`): To exclude documentation for non-exported objects,
-  the keyword argument `include_internal = false` should be set. This is only supported for `markdown`.
-
-  *API-Index `save` ignores this:* and uses the setting each module was saved with.
+  the keyword argument `include_internal= false` should be set. This is only supported for `markdown`.
+  *Index save uses the settings each document was saved with.*
 
 *HTML only options*
 
 * `mathjax`             (default: `false`): If MathJax support is required then the optional keyword
-  argument `mathjax = true` can be given to the `save` method.
+  argument `mathjax=true` can be given.
   MathJax uses `\(...\)` for in-line maths and `\[...\]` or `$$...$$` for display equations.
-
-  *API-Index `save` ignores this.* NOTE: The html format does not yet support saving of separate Index pages.
 
 *Markdown only options*
 
-Valid values for the `mdstyle_*` options listed below are either 1 to 6 `#`
-characters or 0 to 2 `*` characters.
+Valid values for the `mdstyle_*` options listed below are.
+*Headers Tags:* 1 to 6 `#` characters. *Emphasis  Tags:* 0 to 2 `*` characters.`
 
-* `mdstyle_header`              (default: `"#"`):   style for the documentation header and *API-Index*
-  modules header.
-* `mdstyle_objname`             (default: `"####"`): style for each documented object.
+* `mdstyle_module`      (default: `"#"`):  style for the documentation module headers.
+* `mdstyle_section`     (default: `"##"`):  style for the documentation section headers.
+  "Exported" and "Internal"
+* `mdstyle_category`    (default: `"####"`):  style for each documented category headers.
+* `mdstyle_objname`     (default: `"#####"`):  style for each documented object.
+* `mdstyle_obj_name`    (default: `"**"`):  emphasis style for the name of the object. 
+  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_objname` this might or might
+  not give extra emphasis.
+* `mdstyle_obj_sig`     (default: `"*"`):  style for each signature of the object.
+  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_objname` this might or might
+  not give extra emphasis.
+* `mdstyle_meta`        (default: `"*"`):  style for the metadata section on each documentation entry.
 
-  *API-Index `save` ignores this.*
-* `mdstyle_meta`                (default: `"*"`):   style for the metadata section on each documentation entry.
+Permalinks
 
-  *API-Index `save` ignores this.*
-* `mdstyle_subheader`           (default: `"##"`):  style for the documentation and *API-Index* subheader.
-* `mdstyle_index_mod`           (default: `"##"`):  style for the *API-Index* module header.
+* `md_permalink`        (default: `true`):  Adds a permalink to each object.
+* `md_permalink_header` (default: `true`):  Adds a permalink to documentation headers.
+* `md_permalink_char`   (default: `¶`):  Can be used to set a different permalink char.
 
-  *Document `save` ignores this.*
+Output groups
 
-* `md_permalink`                (default: `true`):  Adds a **¶** a permalink to each definition.
-  To disable it the keyword argument `md_permalink = false` should be set.
-* `md_grp_permalink`            (default: `true`):  Adds a **¶** a permalink to documentation and
-  *API-Index* subheaders.
-* `md_permalink_char`           (default: `¶`):  Can be used to set a different permalink char.
-* `md_subheader`                (default: `:simple`): Valid options are ":skip, :simple, :category"
+* `md_section`          (default: `true`): if `md_section=true` section headers
+  "Exported" and "Internal" are inserted. *Index save uses the settings each document was saved with.*
 
-    * `md_subheader=:simple`   adds documentation and *API-Index* subheaders "Exported" / "Internal".
-    * `md_subheader=:category` adds documentation and *API-Index* subheaders per category.
-    * `md_subheader=:split_category` adds documentation and *API-Index* subheaders per category.
-      Each categort is split into: `category ["Exported"]` and `category ["Internal"]
-    * `md_subheader=:skip`     adds no subheaders to the documentation and *API-Index* and can be used
-    for documentation which has only few entries.
+* `md_category`         (default: `true`): if `md_category=true` category headers are inserted.
+  *Index save uses the settings each document was saved with.*
 
-  *API-Index `save` ignores this:* and uses the setting each module was saved with.
+* `md_index_headers`    (default: `true`):  `md_index_headers=true` will add to the
+  *Index Page* a section with links to the module `section and category` headers.
 
-* `md_split_category_prefixed`  (default: `:false`): If `md_subheader=:split_category` this will set:
+Others
 
-  If `md_split_category_prefixed=true`: a prefix to the Section Categories: e.g
+* `md_module_prefix`    (default: `""`): This option sets the documentation module headers
+  a "prefix" text. `md_module_prefix="Module: "` will output headers like **Module: Lexicon**
 
-  * Exported Methods
-  * Internal Methods
-
-  If `md_split_category_prefixed=false`: a postfix to the Section Categories is set: e.g
-
-  * Methods \[Exported\]
-  * Methods \[Internal\]
-
-  *API-Index `save` ignores this:* and uses the setting each module was saved with.
-
-* `md_index_modprefix`          (default: `"MODULE: "`): This option sets for the *API-Index Page*
-  a "prefix" text before the modulename.
-  `md_index_modprefix = ""` if only the modulename should be displayed.
-
-  *Document `save` ignores this.*
-
-* `md_index_grpsection`         (default: `true`):  `md_index_grpsection = true` will add to the
-  *API-Index Page* a Section with links to the module's group subheader sections.
-
-  *Document `save` ignores this.*
+* `md_object_kwarg`     (default: `false`): This option enables the additional output of optional 
+  keyword arguments of objects. This is currently not implemented.
 
 
 Any option can be user adjusted by passing keyword arguments to the `save` method.
@@ -168,11 +149,11 @@ using Lexicon
 index = Index([save("docs/api/Lexicon.md", Lexicon)]);
 
 # 1.
-config = Config(md_index_grpsection = false)
+config = Config(md_index_headers = false)
 save("docs/api/index.md", index, config);
 
 # 2. using the default supplied Config and overwrite a deepcopy
-save("docs/api/index.md", index; md_index_grpsection = false);
+save("docs/api/index.md", index; md_index_headers = false);
 
 # 3. using all defaults
 save("docs/api/index.md", index);
