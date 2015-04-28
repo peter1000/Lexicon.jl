@@ -17,10 +17,11 @@ cd(dirname(@__FILE__)) do
 
     # Generate and save the contents of docstrings as markdown files.
     index  = Index()
+    config = Config(md_section=false)
     for mod in modules
-        update!(index, save(joinpath(api_directory, "$(mod).md"), mod))
+        update!(index, save(joinpath(api_directory, "$(mod).md"), mod, config))
     end
-    save(joinpath(api_directory, "index.md"), index)
+    #save(joinpath(api_directory, "index.md"), index)
 
     # Add a reminder not to edit the generated files.
     open(joinpath(api_directory, "README.md"), "w") do f

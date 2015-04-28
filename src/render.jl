@@ -3,45 +3,60 @@
 parsedocs(ds::Docile.Interface.Docs{:md}) = Markdown.parse(data(ds))
 
 ## Common -------------------------------------------------------------------------------
-const MDHTAGS = ["#", "##", "###", "####", "#####", "######"]
-const MDSTYLETAGS = ["", "*", "**"]
-const MD_SUBHEADER_OPTIONS = [:skip, :simple, :category, :split_category]
+const MDSYLE_HEADER = ["#", "##", "###", "####", "#####", "######"]
+const MDSYLE_EMPHASIS = ["", "*", "**"]
 
 file"docs/config.md"
 type Config
-    category_order              :: Vector{Symbol}
-    include_internal            :: Bool
-    mathjax                     :: Bool
-    mdstyle_header              :: ASCIIString
-    mdstyle_objname             :: ASCIIString
-    mdstyle_meta                :: ASCIIString
-    mdstyle_subheader           :: ASCIIString
-    mdstyle_index_mod           :: ASCIIString
-    md_permalink                :: Bool
-    md_grp_permalink            :: Bool
-    md_permalink_char           :: Char
-    md_subheader                :: Symbol
-    md_split_category_prefixed  :: Bool
-    md_index_modprefix          :: ByteString
-    md_index_grpsection         :: Bool
+    category_order      :: Vector{Symbol}
+    include_internal    :: Bool
+    #
+    mathjax             :: Bool
+    #
+    mdstyle_module      :: ASCIIString
+    mdstyle_section     :: ASCIIString
+    mdstyle_category    :: ASCIIString
+    mdstyle_obj         :: ASCIIString
+    mdstyle_obj_name    :: ASCIIString
+    mdstyle_obj_sig     :: ASCIIString
+    mdstyle_meta        :: ASCIIString
+    #
+    md_permalink        :: Bool
+    md_permalink_header :: Bool
+    md_permalink_char   :: Char
+    #
+    md_section          :: Bool
+    md_category         :: Bool
+    md_index_refheader  :: Bool
+    #
+    md_module_prefix    :: ByteString
+    md_object_kwarg     :: Bool
 
     const defaults = Dict{Symbol, Any}([
-        (:category_order                , [:module, :function, :method, :type,
-                                           :typealias, :macro, :global, :comment]),
-        (:include_internal              , true),
-        (:mathjax                       , false),
-        (:mdstyle_header                , "#"),
-        (:mdstyle_objname               , "####"),
-        (:mdstyle_meta                  , "*"),
-        (:mdstyle_subheader             , "##"),
-        (:mdstyle_index_mod             , "##"),
-        (:md_permalink                  , true),
-        (:md_grp_permalink              , true),
-        (:md_permalink_char             , '¶'),
-        (:md_subheader                  , :simple),
-        (:md_split_category_prefixed    , false),
-        (:md_index_modprefix            , "MODULE: "),
-        (:md_index_grpsection           , true),
+        (:category_order        , [:module, :function, :method, :type,
+                                   :typealias, :macro, :global, :comment]),
+        (:include_internal      , true),
+        #
+        (:mathjax               , false),
+        #
+        (:mdstyle_module        , "#"),
+        (:mdstyle_section       , "##"),
+        (:mdstyle_category      , "####"),
+        (:mdstyle_obj           , "#####"),
+        (:mdstyle_obj_name      , "**"),
+        (:mdstyle_obj_sig       , "*"),
+        (:mdstyle_meta          , "*"),
+        #
+        (:md_permalink          , true),
+        (:md_permalink_header   , true),
+        (:md_permalink_char     , '¶'),
+        #
+        (:md_section            , true),
+        (:md_category           , true),
+        (:md_index_refheader    , true),
+        #
+        (:md_module_prefix      , ""),
+        (:md_object_kwarg       , false),
         ])
 
     """
@@ -66,58 +81,52 @@ function update_config!(config::Config, args::Dict)
             warn("Invalid setting: '$(k) = $(v)'. Error: $err")
         end
     end
-
-    for k in [:mdstyle_header, :mdstyle_objname, :mdstyle_meta, :mdstyle_subheader, :mdstyle_index_mod]
-        getfield(config, k) in vcat(MDHTAGS, MDSTYLETAGS) ||
+    for k in [:mdstyle_module, :mdstyle_section, :mdstyle_category,
+              :mdstyle_obj,:mdstyle_obj_name, :mdstyle_obj_sig, :mdstyle_meta]
+        getfield(config, k) in vcat(MDSYLE_HEADER, MDSYLE_EMPHASIS) ||
                 error("""Invalid mdstyle : config-item `$k -> $(getfield(config, k))`.
-                      Valid values: [$(join(vcat(MDHTAGS, MDSTYLETAGS), ", "))].""")
-
-        config.md_subheader in MD_SUBHEADER_OPTIONS ||
-                    error("""Invalid md_subheader : config-item `$k -> $(getfield(config, k))`.
-                          Valid values: $MD_SUBHEADER_OPTIONS.""")
+                      Valid values: [$(join(vcat(MDSYLE_HEADER, MDSYLE_EMPHASIS), ", "))].""")
     end
     return config
 end
 
 # Per Module one 'Entries' is created which has all needed data
 type Entries
-    sourcepath       :: ByteString
+    sourcepath      :: ByteString
     # savedconfig keeps the config which was used for ` documentation save`
     # name on purpose slightly different to avoid easily mixing it up with a passed argument in index
-    # passing all around. e.g. If save uses `md_subheader-:skip` we can not add a Section in API-Index
-    savedconfig      :: Config
-    index_relpath    :: ByteString
-    modulename       :: Module
-    has_items        :: Bool            # avoids double checking
-    isjoined         :: Bool            # join all for config.md_subheader: skip and category
-    exported         :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
-    internal         :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
-    joined           :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
-    grp_anchors      :: Vector{@compat(Tuple{AbstractString, AbstractString})}
+    savedconfig     :: Config
+    index_relpath   :: ByteString
+    modulename      :: Module
+    has_items       :: Bool            # avoids double checking
+    exported        :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
+    internal        :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
+    joined          :: Dict{Symbol, Vector{@compat(Tuple{Any, AbstractEntry, AbstractString})}}
+    sections        :: Dict{ASCIIString, AbstractString}
+    categories      :: Dict{Symbol, @compat(Tuple{AbstractString, AbstractString})}
 
     Entries(sourcepath::ByteString, modulename::Module, config::Config) =
                             new(sourcepath, config, "", modulename, false,
-                                (config.md_subheader == :skip || config.md_subheader == :category),
                                 Dict([(c, []) for c in config.category_order]),
                                 Dict([(c, []) for c in config.category_order]),
                                 Dict([(c, []) for c in config.category_order]),
-                                [])
+                                Dict([("External", ""), ("Internal", "")]),
+                                Dict([(c,  ("", "")) for c in config.category_order])
+                                )
 end
 
-function has_items(entries::Dict)
-    return sum([length(x) for x in values(entries)]) > 0
-end
+has_items(entries::Dict) = sum([length(x) for x in values(entries)]) > 0
 
 function push!(ents::Entries, obj, ent::AbstractEntry, anchorname::AbstractString, cat::Symbol)
-    if ents.isjoined
-        push!(ents.joined[cat], (obj, ent, anchorname))
-    else
+    if ents.savedconfig.md_section
         if isexported(ents.modulename, obj)
             push!(ents.exported[cat], (obj, ent, anchorname))
         else ents.savedconfig.include_internal
             push!(ents.internal[cat], (obj, ent, anchorname))
         end
-    end
+    else
+        push!(ents.joined[cat], (obj, ent, anchorname))
+   end
 end
 
 function push!(grp_anchors::Vector, grpname::AbstractString, grp_anchorname::AbstractString)
@@ -140,19 +149,21 @@ function mainsetup(io::IO, mime::MIME, doc::Metadata, ents::Entries)
         writemime(io, mime, readall(joinpath(rootdir, file)))
     end
     idx = Dict{Symbol, Any}()
-    for (obj, entry) in entries(doc)
+    for (obj, entry) in entries(doc)        
         addentry!(idx, obj, entry)
     end
 
     if !isempty(idx)
         ents = prepare_entries(idx, ents, doc)
-        if ents.isjoined && has_items(ents.joined)
-            ents.has_items = true
+        if ents.savedconfig.md_section 
+            if (has_items(ents.exported) || has_items(ents.internal))
+                ents.has_items = true
+                #process_entries(io, mime, ents, "Exported")
+                #process_entries(io, mime, ents, "Internal")
+            end
+        elseif has_items(ents.joined)
+            #ents.has_items = true
             process_entries(io, mime, ents)
-        elseif (has_items(ents.exported) || has_items(ents.internal))
-            ents.has_items = true
-            process_entries(io, mime, ents, "Exported")
-            process_entries(io, mime, ents, "Internal")
         end
     end
     return ents
@@ -175,8 +186,7 @@ function prepare_entries(idx::Dict{Symbol, Any}, ents::Entries, doc::Metadata)
             basename in keys(basenames)                  ?
                     anchornum = basenames[basename] += 1 :
                     anchornum = basenames[basename] = 1
-            string(k, "_", generate_html_id(s))
-            push!(ents, obj, entries(doc)[obj], string(k, "__", basename, ".", anchornum), k)
+            push!(ents, obj, entries(doc)[obj], "$(k)__$(basename).$(anchornum)", k)
         end
     end
     return ents
@@ -191,14 +201,14 @@ function save(file::AbstractString, modulename::Module, config::Config; args...)
 end
 save(file::AbstractString, modulename::Module; args...) = save(file, modulename, Config(); args...)
 
-"""
-Saves an *API-Index* to `file`.
-"""
-function save(file::AbstractString, index::Index, config::Config; args...)
-    config = update_config!(deepcopy(config), Dict(args))
-    save(file, MIME("text/$(strip(last(splitext(file)), '.'))"), index, config)
-end
-save(file::AbstractString, index::Index; args...) = save(file, index, Config(); args...)
+#"""
+#Saves an *API-Index* to `file`.
+#"""
+#function save(file::AbstractString, index::Index, config::Config; args...)
+#    config = update_config!(deepcopy(config), Dict(args))
+#    save(file, MIME("text/$(strip(last(splitext(file)), '.'))"), index, config)
+#end
+#save(file::AbstractString, index::Index; args...) = save(file, index, Config(); args...)
 
 # Convert's a string to a valid html id
 function generate_html_id(s::AbstractString)

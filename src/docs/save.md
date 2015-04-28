@@ -23,7 +23,13 @@ save("docs/api/api-index.md", index);
 
 ##### Markdown html anchor
 
-Html anchors are inserted for each definition inclusive header and grouped sections. 
+Html anchors are inserted for each 
+
+* module header
+* section header
+* category header
+* objname header
+
 Additional to the `id` tag the same lexicon class tag is inserted `class="lexicon_definition".`
 
 ##### Sorting

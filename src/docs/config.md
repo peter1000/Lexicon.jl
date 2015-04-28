@@ -27,20 +27,21 @@ Valid values for the `mdstyle_*` options listed below are.
 * `mdstyle_section`     (default: `"##"`):  style for the documentation section headers.
   "Exported" and "Internal"
 * `mdstyle_category`    (default: `"####"`):  style for each documented category headers.
-* `mdstyle_objname`     (default: `"#####"`):  style for each documented object.
+  The *Index reference* section header uses also this style. see option `md_index_refheader`.
+* `mdstyle_obj`         (default: `"#####"`):  style for each documented object.
 * `mdstyle_obj_name`    (default: `"**"`):  emphasis style for the name of the object. 
-  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_objname` this might or might
-  not give extra emphasis.
+  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_obj` this might or might
+  not give extra emphasis. *This is currently not implemented.*
 * `mdstyle_obj_sig`     (default: `"*"`):  style for each signature of the object.
-  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_objname` this might or might
-  not give extra emphasis.
+  Only Emphasis Tags are allowed. Dependend on the choosen `mdstyle_obj` this might or might
+  not give extra emphasis. *This is currently not implemented.*
 * `mdstyle_meta`        (default: `"*"`):  style for the metadata section on each documentation entry.
 
 Permalinks
 
 * `md_permalink`        (default: `true`):  Adds a permalink to each object.
 * `md_permalink_header` (default: `true`):  Adds a permalink to documentation headers.
-* `md_permalink_char`   (default: `¶`):  Can be used to set a different permalink char.
+* `md_permalink_char`   (default: `'¶'`):  Can be used to set a different permalink char.
 
 Output groups
 
@@ -50,8 +51,8 @@ Output groups
 * `md_category`         (default: `true`): if `md_category=true` category headers are inserted.
   *Index save uses the settings each document was saved with.*
 
-* `md_index_headers`    (default: `true`):  `md_index_headers=true` will add to the
-  *Index Page* a section with links to the module `section and category` headers.
+* `md_index_refheader`     (default: `true`):  `md_index_refheader=true` will add to the
+  *Index Page* a section with references to the module `section and category` headers.
 
 Others
 
@@ -59,7 +60,7 @@ Others
   a "prefix" text. `md_module_prefix="Module: "` will output headers like **Module: Lexicon**
 
 * `md_object_kwarg`     (default: `false`): This option enables the additional output of optional 
-  keyword arguments of objects. This is currently not implemented.
+  keyword arguments of objects. *This is currently not implemented.*
 
 
 Any option can be user adjusted by passing keyword arguments to the `save` method.
