@@ -1,2 +1,2 @@
-*.cov
-*.mem
+*.jl.cov
+*.jl.mem
