@@ -121,6 +121,7 @@ function update_config!(config::Config, args::Dict)
     # Only Emphasis
     mdstyle_validation(MDSTYLE_SYM_ONLY_EMPHASIS, MDSTYLE_EMPHASIS, config)
 
+
     ## Other validations
     for cat in config.category_order
         cat in CATEGORIES || error("""Invalid category_order item:  `$cat)`.

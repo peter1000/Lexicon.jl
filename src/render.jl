@@ -1,4 +1,5 @@
 ## Common render methods --------------------------------------------------------
+
 """
 TODO: needs to be redone.
 """
@@ -37,13 +38,10 @@ function save(file::AbstractString, modname::Module, config::Config; args...)
     # So for a package it would be `Pkg.dir("MODULENAME", "src", "MODULENAME.jl")`.
     modname_str = string(modname)
     rootfile = Pkg.dir(modname_str, "src", "$(modname_str).jl")
-    # Register a package by specifying a root module and file. Use `PlaintextFormatter`
-    Docile.Cache.register!(modname, rootfile; format = Docile.Formats.PlaintextFormatter) # TODO: extract
-    index_entries = save(file, mime, modname, config)
+    index_entries = save(file, mime, modname, rootfile, config)
     return index_entries
 end
 save(file::AbstractString, modname::Module; args...) = save(file, modname, Config(); args...)
-
 
 ## Format-specific rendering ------------------------------------------------------------
 include("render/md.jl")
