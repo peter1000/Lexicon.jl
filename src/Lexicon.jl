@@ -18,6 +18,6 @@ export
 
 
 include("config.jl")            # Configuration settings.
-include("render.jl")            # Render none format specific.
+include("render.jl")            # Common render methods.
 
 end 

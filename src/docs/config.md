@@ -9,8 +9,11 @@ User adjustable Lexicon configuration.
 * `category_order`      (default: `[:module, :function, :method, :type, :typealias, :macro, :global, :aside]`)
   Categories  to include in the output in the defined order.
   *Index save uses the settings each document was saved with.*
+
+  * Valid categories are: [:module, :function, :method, :type, :typealias, :macro, :global, :aside]
+
 * `metadata_order`      (default: `[]`) Metadata to include in the output in the defined order.
-  To not output any metadate `metadata_order = Symbol[]` should be set.
+  To not output any metadate `metadata_order = []` should be set.
 * `include_internal`    (default: `true`): To exclude documentation for non-exported objects,
   the keyword argument `include_internal= false` should be set.
   *Index save uses the settings each document was saved with.*
@@ -60,18 +63,18 @@ Others
 
 * `md_module_prefix`    (default: `""`): This option sets for the documentation module headers
   a "prefix" text. `md_module_prefix="Module: "` will output headers like **Module: Lexicon**
-* `md_obj_signature`    (default: `:normal`): To shorten and simplify the object definition header 
-  line this can be set to false. Valid options are 
-  
+* `md_obj_signature`    (default: `:normal`): To shorten and simplify the object definition header
+  line this can be set to false. Valid options are
+
   * `:normal`:  will output the complete object definition.
   * `:remove`:  will remove all content within curly brackets.
-  * `:remove2`:  will remove all content within curly brackets and add below the 
+  * `:remove2`:  will remove all content within curly brackets and add below the
   header an extra line with the complete type signature without any emphasis. This is only done for
   definitions which had type parameters within curly brackets.
-  
---- 
-  
-EXAMPLE **md_obj_sig_curly** using a config setting like: 
+
+---
+
+EXAMPLE **md_obj_sig_curly** using a config setting like:
 
 * `mdstyle_obj=" "`: means normal style tags for object sections
 * `mdstyle_obj_name="**"`: means object name will have bold emphasis
@@ -90,20 +93,20 @@ EXAMPLE **md_obj_sig_curly** using a config setting like:
 
 > **newdesign**(*::Union(Type, Type), a::Array*)
 
-`md_obj_signature = remove2` will remove all content within curly brackets and add below the 
+`md_obj_signature = remove2` will remove all content within curly brackets and add below the
 header an extra line with the complete type signature without any emphasis.
 
 > **newdesign**(*::Union(Type, Type), a::Array*)
-> 
+>
 > newdesign{P <: Ptr, T < :Ptr}(::Union(Type{Ptr{P}}, Type{Ref{P}}), a::Array{T})
 
-  
+
 Any option can be user adjusted by passing keyword arguments to the `save` method.
 
 
 ##### Config Usage
 
-There are 3 ways to define user adjusted configuration settings.
+There are 4 ways to define user adjusted configuration settings.
 
 *1. Config*
 
@@ -115,6 +118,13 @@ config = Config()
 
 # get a new adjusted `Config`
 config = Config(md_permalink = false)
+
+# get a new adjusted `Config`
+mysettings = Dict([(:category_order    , [:type, :function, :method]),
+                   (:metadata_order    , [:date, :日期]),
+                   (:include_internal  , false)])
+config=Config(mydict)
+config = Config(mysettings)
 
 ```
 

@@ -1,5 +1,6 @@
-const MDSYLE_HEADER = ["#", "##", "###", "####", "#####", "######"]
-const MDSYLE_EMPHASIS = [" ", "*", "**"]
+# MARKDOWN ONLY
+const MDSTYLE_HEADER = ["#", "##", "###", "####", "#####", "######"]
+const MDSTYLE_EMPHASIS = [" ", "*", "**"]
 
 "docs/config.md"
 type Config
@@ -31,7 +32,7 @@ type Config
     const defaults = Dict{Symbol, Any}([
 
         (:category_order       , [:module, :function, :method, :type, :typealias, :macro, :global, :aside]),
-        (:metadata_order       , Symbol[]),
+        (:metadata_order       , []),
         (:include_internal     , true),
         #
         (:mdstyle_module       , "#"),
@@ -60,12 +61,34 @@ type Config
 
     ```
     using Lexicon
-    config = Config(md_permalink = false, mathjax = true)
+    config = Config(md_permalink=false, md_obj_signature=:normal)
 
     ```
     """
-    function Config(; args...)
-        return update_config!(new(), merge(defaults, Dict(args)))
+    Config(; args...) = update_config!(new(), merge(defaults, Dict(args)))
+
+    """
+    Returns a default Config. If any args... are given these will overwrite the defaults.
+
+    ```
+    using Lexicon
+    mydict = Dict([(:category_order    , [:type, :function, :method]),
+                   (:metadata_order    , [:date, :日期]),
+                   (:include_internal  , false)])
+    config=Config(mydict)
+
+    ```
+    """
+    Config(args::Dict) =  update_config!(new(), merge(defaults, args))
+end
+
+## MDStyle validations: does allow empty values
+function mdstyle_validation(symbols::Vector, mdstyles::Vector, config::Config)
+    for k in symbols
+        value = getfield(config, k)
+        isempty(value) && continue  # no requirement check: empty is a valid option
+        value in mdstyles || error("""Invalid mdstyle : config-item `$k -> $(getfield(config, k))`.
+                                   Valid values: [$(join(vcat(mdstyles, [""]), ", "))].""")
     end
 end
 
@@ -77,24 +100,41 @@ function update_config!(config::Config, args::Dict)
             warn("Invalid setting: '$(k) = $(v)'.")
          end
     end
-    # Header plus Emphasis or Empty
-    for k in [:mdstyle_module, :mdstyle_section, :mdstyle_category,
-              :mdstyle_index_ref,:mdstyle_meta, :mdstyle_obj]
-        getfield(config, k) in vcat(MDSYLE_HEADER, MDSYLE_EMPHASIS) ||
-                error("""Invalid mdstyle : config-item `$k -> $(getfield(config, k))`.
-                      Valid values: [$(join(vcat(MDSYLE_HEADER, MDSYLE_EMPHASIS, [""]), ", "))].""")
-    end
-    # Only Emphasis
-    for k in [:mdstyle_obj_name, :mdstyle_obj_sig]
-        getfield(config, k) in vcat(MDSYLE_EMPHASIS) ||
-                error("""Invalid mdstyle : config-item `$k -> $(getfield(config, k))`.
-                      Valid values: [$(join(MDSYLE_EMPHASIS, ", "))].""")
-    end
-    # Required
-    for k in [:mdstyle_module, :mdstyle_obj]
+
+    # Some of this might be moved to file top f needed outside of this function
+    const CATEGORIES =     [:module, :function, :method, :type, :typealias, :macro, :global, :aside]
+    const OBJ_SIGNATURES = [:normal, :remove,   :remove2]
+
+    const MDSTYLE_SYM_HEADER_AND_EMPHASIS = [:mdstyle_module,   :mdstyle_section, :mdstyle_category,
+                                             :mdstyle_index_ref,:mdstyle_meta,    :mdstyle_obj]
+    const MDSTYLE_SYM_ONLY_EMPHASIS       = [:mdstyle_obj_name, :mdstyle_obj_sig]
+    const MDSTYLE_SYM_HEADER_REQUIRED     = [:mdstyle_module, :mdstyle_obj]
+
+    # Required MDSTYLE
+    for k in MDSTYLE_SYM_HEADER_REQUIRED
         isempty(getfield(config, k)) &&
                 error("""Invalid mdstyle : config-item is required: `$k -> $(getfield(config, k))`.
-                      Valid values: [$(join(vcat(MDSYLE_HEADER, MDSYLE_EMPHASIS), ", "))].""")
+                      Valid values: [$(join(vcat(MDSTYLE_HEADER, MDSTYLE_EMPHASIS), ", "))].""")
     end
+    # Header plus Emphasis or Empty
+    mdstyle_validation(MDSTYLE_SYM_HEADER_AND_EMPHASIS, vcat(MDSTYLE_HEADER, MDSTYLE_EMPHASIS), config)
+    # Only Emphasis
+    mdstyle_validation(MDSTYLE_SYM_ONLY_EMPHASIS, MDSTYLE_EMPHASIS, config)
+
+    ## Other validations
+    for cat in config.category_order
+        cat in CATEGORIES || error("""Invalid category_order item:  `$cat)`.
+                        Valid values: $(CATEGORIES).""")
+    end
+    config.md_obj_signature in OBJ_SIGNATURES ||
+                error("""Invalid md_obj_signature item:  `$(config.md_obj_signature))`.
+                      Valid values: $(OBJ_SIGNATURES).""")
+    # mistaken double entries in Vectors
+    length(Set(config.category_order)) == length(config.category_order) ||
+              error("Seems there a double entries in category_order:  `$(config.category_order))`.")
+    length(Set(config.metadata_order)) == length(config.metadata_order) ||
+              error("Seems there a double entries in metadata_order:  `$(config.metadata_order))`.")
+
     return config
 end
+update_config!(config::Config; args...) = update_config!(config, Dict(args))

@@ -1,5 +1,9 @@
-using Lexicon
-using Base.Test
+OS_NAME == :Windows && Pkg.add("FactCheck") # Hack for appveyor.
 
-# write your own tests here
-@test 1 == 1
+module LexiconTests
+
+using Docile, Docile.Interface, Lexicon, FactCheck
+
+include("facts/config_check.jl")
+
+end

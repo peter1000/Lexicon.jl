@@ -1,3 +1,4 @@
+## Common render methods --------------------------------------------------------
 """
 TODO: needs to be redone.
 """
