@@ -33,12 +33,7 @@ The format is guessed from the `file`'s extension. Currently supported formats a
 function save(file::AbstractString, modname::Module, config::Config; args...)
     config = update_config!(deepcopy(config), Dict(args))
     mime = MIME("text/$(strip(last(splitext(file)), '.'))")
-
-    # `rootfile` is where module `modname ... end` is found. 
-    # So for a package it would be `Pkg.dir("MODULENAME", "src", "MODULENAME.jl")`.
-    modname_str = string(modname)
-    rootfile = Pkg.dir(modname_str, "src", "$(modname_str).jl")
-    index_entries = save(file, mime, modname, rootfile, config)
+    index_entries = save(file, mime, modname, config)
     return index_entries
 end
 save(file::AbstractString, modname::Module; args...) = save(file, modname, Config(); args...)
