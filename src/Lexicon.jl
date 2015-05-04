@@ -1,5 +1,23 @@
 module Lexicon
 
-# package code goes here
+import Docile.Formats, Markdown
 
-end # module
+using
+
+    Compat,
+    Docile,
+    Docile.Interface
+
+export
+
+    update!,
+    save,
+
+    Config,
+    Index
+
+
+include("config.jl")            # Configuration settings.
+include("render.jl")            # Render none format specific.
+
+end 
