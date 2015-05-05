@@ -7,16 +7,16 @@ Docile.Formats.parsedocs(::Docile.Formats.Format{MarkdownFormatter}, raw) = Mark
 """
 
 """ =#
-function save(file::AbstractString, mime::MIME"text/md", modname::Module, config::Config)
+function save(file::AbstractString, mime::MIME"text/md", mod::Module, config::Config)
     #ents = Entries(abspath(file), config)
 
-    #raw_ = Docile.Cache.getraw(modname)
+    #raw_ = Docile.Cache.getraw(mod)
     #println("raw_: ", raw_ )
-    #Docile.Cache.parse!(modname)
-    #parsed_ = Docile.Cache.getparsed(modname)
+    #Docile.Cache.parse!(mod)
+    #parsed_ = Docile.Cache.getparsed(mod)
     #println("parsed_: ", keys(parsed_))
 
-    #meta_ = Docile.Cache.getmeta(modname)
+    #meta_ = Docile.Cache.getmeta(mod)
     #println("meta_: ", keys(meta_ ))
     #println("meta_: ", meta_[Lexicon.Config])
 
