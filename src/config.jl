@@ -59,10 +59,9 @@ type Config
     """
     Returns a default Config. If any args... are given these will overwrite the defaults.
 
-    ```
+    ```julia_skip
     using Lexicon
     config = Config(md_permalink=false, md_obj_signature=:normal)
-
     ```
     """
     Config(; args...) = update_config!(new(), merge(defaults, Dict(args)))
@@ -70,13 +69,12 @@ type Config
     """
     Returns a default Config. If any args... are given these will overwrite the defaults.
 
-    ```
+    ```julia_skip
     using Lexicon
     mydict = Dict([(:category_order    , [:type, :function, :method]),
                    (:metadata_order    , [:date, :日期]),
                    (:include_internal  , false)])
     config=Config(mydict)
-
     ```
     """
     Config(args::Dict) =  update_config!(new(), merge(defaults, args))

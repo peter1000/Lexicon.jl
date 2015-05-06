@@ -110,7 +110,7 @@ There are 4 ways to define user adjusted configuration settings.
 
 *1. Config*
 
-```julia
+```julia_skip
 using Lexicon
 
 # get default `Config`
@@ -125,7 +125,6 @@ mysettings = Dict([(:category_order    , [:type, :function, :method]),
                    (:include_internal  , false)])
 config=Config(mydict)
 config = Config(mysettings)
-
 ```
 
 *2. Document `save` method*
@@ -135,7 +134,7 @@ Similar to the above 'Config usage' one can also pass otional `args...` which wi
 deepcopy of config but not change config itself.
 This allows using the same base configuration settings multiple times.
 
-```julia
+```julia_skip
 using Lexicon
 
 # 1. get a new adjusted `Config`
@@ -149,12 +148,11 @@ save("docs/api/Lexicon.md", Lexicon, config; md_permalink = true);
 
 # 4. This uses the same configuration as set in '1.' (md_permalink is still `false`)
 save("docs/api/Lexicon.md", Lexicon, config);
-
 ```
 
 The document `save` also supplies a default 'Config'.
 
-```julia
+```julia_skip
 using Lexicon
 
 # 1. using the default supplied Config of method `save`
@@ -163,12 +161,11 @@ save("docs/api/Lexicon.md", Lexicon);
 # 2. this is the same as '1.'
 config = Config()
 save("docs/api/Lexicon.md", Lexicon, config);
-
 ```
 
 The next three examples are all using the same configuration to save *Lexicon*
 
-```julia
+```julia_skip
 using Lexicon
 
 # 1.
@@ -181,7 +178,6 @@ save("docs/api/Lexicon.md", Lexicon, config; md_permalink = false);
 
 # 3.
 save("docs/api/Lexicon.md", Lexicon; md_permalink = false);
-
 ```
 
 
@@ -190,7 +186,7 @@ save("docs/api/Lexicon.md", Lexicon; md_permalink = false);
 The configuration settings for the *API-Index* `save` method works similar to the above
 *Document `save` method*
 
-```
+```julia_skip
 using Lexicon
 index = Index([save("docs/api/Lexicon.md", Lexicon)]);
 
@@ -203,5 +199,4 @@ save("docs/api/index.md", index; mdstyle_index_ref = false);
 
 # 3. using all defaults
 save("docs/api/index.md", index);
-
 ```
