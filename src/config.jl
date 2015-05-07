@@ -6,7 +6,7 @@ const MDSTYLE_EMPHASIS = [" ", "*", "**"]
 type Config
 
     category_order       :: Vector{Symbol}
-    metadata_order       :: Vector{Symbol}
+    metadata_order       :: Vector{Tuple{Symbol, UTF8String}}
     include_internal     :: Bool
     #
     mdstyle_module       :: ASCIIString
@@ -32,7 +32,11 @@ type Config
     const defaults = Dict{Symbol, Any}([
 
         (:category_order       , [:module, :function, :method, :type, :typealias, :macro, :global, :aside]),
-        (:metadata_order       , []),
+        (:metadata_order       , [
+                                  (:author    , "笔者 : "),
+                                  (:license   , "License: "),
+                                  (:args      , "Arguments: "),
+                                  (:page      , "Output Section: ")]),
         (:include_internal     , true),
         #
         (:mdstyle_module       , "#"),
