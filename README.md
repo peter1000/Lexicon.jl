@@ -1,72 +1,103 @@
-# Lexicon
+# Lexicon Experiment
 
-**Documentation**
+**Usage**
 
-[![Stable Documentation][stable-docs-img]][stable-docs-url]
-[![Latest Documentation][latest-docs-img]][latest-docs-url]
+Not useable at the moment.
 
-**Builds**
 
-[![Build Status][travis-img]][travis-url]
-[![Build status][appveyor-img]][appveyor-url]
+## Roadmap
 
-**Package Status**
+Implement a rough sketch of *Lexicon Experimental* based on the new 
+[DocileExperimental](https://github.com/MichaelHatherly/Docile.jl/tree/master/src/Experimental) for:
 
-[![Coverage Status][coveralls-img]][coveralls-url]
-[![Docile][pkgeval-img]][pkgeval-url]
+* single or triple quoted docstrings
 
-## Overview
+* format markdown
 
-*Lexicon* is a [Julia](http://www.julialang.org) package documentation generator
-and viewer.
+* julia 0.4- 
 
-It provides access to the documentation created by the `@doc` macro from
-[*Docile*][docile-url]. *Lexicon* allows querying of package documentation from
-the Julia REPL and building standalone documentation that can be hosted on GitHub
-Pages or [Read the Docs](https://readthedocs.org/).
+#### Implement the new features from the Docile/Lexicon issues.
 
-*Lexicon* separates the non-essential parts from *Docile* so that
-package load times are not impacted when documenting packages using
-`@doc`. See [this issue][issue-url] for details regarding the split.
+* Make a new *Configuration* system a central feature of the *Lexicon Experimental* markdown format.
 
-## Installation
+    * For configuration make use of the Docile new feature: [Extensible Metadata Syntax](https://github.com/MichaelHatherly/Lexicon.jl/issues/105)
 
-*Lexicon* is available from `METADATA` and may be installed via:
+    * see also [.docile config file](https://github.com/MichaelHatherly/Docile.jl/pull/96#issuecomment-100010167)
+    
+    * see also: [optional .docile file](https://github.com/MichaelHatherly/Docile.jl/issues/89#issuecomment-100179496)
 
-```julia
-Pkg.add("Lexicon")
-```
 
-## Documentation
+* Add a seamless integration to document multiple packages.
 
-Package documentation is available for the [stable][stable-docs-url] and
-[development][latest-docs-url] versions.
+    * Extract for ALL Pkg documentation: https://github.com/MichaelHatherly/Lexicon.jl/issues/71
 
-## Issues and Support
 
-Please file any issues or feature requests you might have through the GitHub
-[issue tracker][issue-tracker].
+* Implement a new *Section* system as a central feature of the *Lexicon Experimental* markdown format.
 
-[travis-img]: https://travis-ci.org/MichaelHatherly/Lexicon.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/MichaelHatherly/Lexicon.jl
+  This will solve most of the issues and ideas below.
 
-[appveyor-img]: https://ci.appveyor.com/api/projects/status/qmuv67ku625ioiwc/branch/master?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/MichaelHatherly/lexicon-jl/branch/master
+  * Respect the :section metadata:  https://github.com/MichaelHatherly/Lexicon.jl/issues/8:
 
-[coveralls-img]: https://img.shields.io/coveralls/MichaelHatherly/Lexicon.jl.svg
-[coveralls-url]: https://coveralls.io/r/MichaelHatherly/Lexicon.jl
+  * Propose new `section` meta: https://github.com/MichaelHatherly/Lexicon.jl/issues/103
 
-[pkgeval-img]: http://pkg.julialang.org/badges/Lexicon_release.svg
-[pkgeval-url]: http://pkg.julialang.org/?pkg=Lexicon&ver=release
+  * Group section by Category only https://github.com/MichaelHatherly/Lexicon.jl/issues/99
 
-[docile-url]: https://github.com/MichaelHatherly/Docile.jl
+  * placement of "[Exported]" https://github.com/MichaelHatherly/Lexicon.jl/issues/93
 
-[issue-url]: https://github.com/MichaelHatherly/Docile.jl/issues/27
+  * save index in the same order as the modules: https://github.com/MichaelHatherly/Lexicon.jl/issues/90
+  
+  * shortcomings of new reference anchors: https://github.com/MichaelHatherly/Lexicon.jl/issues/95
 
-[issue-tracker]: https://github.com/MichaelHatherly/Lexicon.jl/issues
 
-[latest-docs-img]: https://readthedocs.org/projects/lexiconjl/badge/?version=latest
-[stable-docs-img]: https://readthedocs.org/projects/lexiconjl/badge/?version=stable
+* Implement an improved output of object definition header
 
-[latest-docs-url]: http://lexiconjl.readthedocs.org/en/latest/
-[stable-docs-url]: http://lexiconjl.readthedocs.org/en/stable/
+  This will solve most of the issues and ideas below.
+  
+    * Show keyword arguments in generated output: https://github.com/MichaelHatherly/Lexicon.jl/issues/19
+    
+    * Duplicate entries generated for methods with default arguments. https://github.com/MichaelHatherly/Lexicon.jl/issues/17
+
+
+* Improved Anchor and hyperlink options
+
+    * Add Anchor to groups like Exported/Internal : https://github.com/MichaelHatherly/Lexicon.jl/issues/92
+    
+    * Permalink only to display when hoover over it (Speculative): https://github.com/MichaelHatherly/Lexicon.jl/issues/102
+
+
+* Ease integration with 3rd party [MkDocs](https://github.com/mkdocs/mkdocs/)
+
+    * Add page order option: https://github.com/MichaelHatherly/Lexicon.jl/issues/106
+
+
+* Add improved source reference.
+
+    * Better github code reference (Speculative): https://github.com/MichaelHatherly/Docile.jl/issues/90
+
+    * Line number to point to docstring start.: https://github.com/MichaelHatherly/Docile.jl/issues/86
+
+---
+
+Review *Lexicon Experimental* features and decide which should go into the *New Lexicon*
+
+Finalise and polish the features for 
+
+* single or triple quoted docstrings
+
+* format markdown
+
+* julia 0.4- 
+
+Decide which remaining features of the current Lexicon should be readded in case such where left out 
+in the rough sketch of *Lexicon Experimental*. Add them.
+
+Backport to julia 3 if necessary.
+
+Add suport for @doc related macros.
+
+Implement the plain format and REPL integration.
+
+Implement other formats (example html).
+
+Replace `Lexicon` with `LexiconExperimental`.
+

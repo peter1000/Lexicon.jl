@@ -1,7 +1,7 @@
 site_name:           Lexicon.jl
-repo_url:            https://github.com/MichaelHatherly/Lexicon.jl
+repo_url:            https://github.com/peter1000/Lexicon.jl
 site_description:    Julia package documentation generator.
-site_author:         Michael Hatherly
+site_author:         peter1000
 theme:               flatly
 markdown_extensions: [tables, fenced_code]
 pages:

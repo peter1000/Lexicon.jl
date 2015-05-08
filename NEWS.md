@@ -1,3 +1,12 @@
+20150508  Start of a rough sketch of *Lexicon Experimental*
+
+
+
+
+
+
+
+
 ### v0.1.9
 
 * Backport Julia `0.4` `Markdown` codebase.
