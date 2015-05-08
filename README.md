@@ -7,12 +7,12 @@ Not useable at the moment.
 
 ## Roadmap
 
-Implement a rough sketch of *Lexicon Experimental* based on the new 
+Implement a rough sketch of *Lexicon Experimental* based on the new
 [DocileExperimental](https://github.com/MichaelHatherly/Docile.jl/tree/master/src/Experimental) for:
 
 * single or triple quoted docstrings
 * format markdown
-* julia 0.4- 
+* julia 0.4-
 
 #### Implement the new features from the Docile/Lexicon issues.
 
@@ -43,7 +43,7 @@ Implement a rough sketch of *Lexicon Experimental* based on the new
 * Implement an improved output of object definition header
 
   This will solve most of the issues and ideas below.
-  
+
     * Show keyword arguments in generated output: https://github.com/MichaelHatherly/Lexicon.jl/issues/19
     * Duplicate entries generated for methods with default arguments. https://github.com/MichaelHatherly/Lexicon.jl/issues/17
 
@@ -58,6 +58,10 @@ Implement a rough sketch of *Lexicon Experimental* based on the new
 
     * Add page order option: https://github.com/MichaelHatherly/Lexicon.jl/issues/106
 
+    * Auto generate MkDocs `mkdocs.yml` file
+
+    * Auto generate a MkDocs `index.md` file.
+
 
 * Add improved source reference.
 
@@ -71,13 +75,13 @@ Implement a rough sketch of *Lexicon Experimental* based on the new
 
 Review *Lexicon Experimental* features and decide which should go into the *New Lexicon*
 
-Finalise and polish the features for 
+Finalise and polish the features for
 
 * single or triple quoted docstrings
 * format markdown
-* julia 0.4- 
+* julia 0.4-
 
-Decide which remaining features of the current Lexicon should be readded in case such where left out 
+Decide which remaining features of the current Lexicon should be readded in case such where left out
 in the rough sketch of *Lexicon Experimental*. Add them.
 
 Backport to julia 3 if necessary.
