@@ -6,8 +6,10 @@ using
     Docile.Interface
 
 
-include("Utilities.jl")             # Code useful across submodules.
+include("Utilities.jl")                                 # Code useful across submodules.
 
-include("Render/Render.jl")         # Render-dispatch for output of docstrings.
+isfile("../.docile") && include("../.docile")           # Central package documentation configuration.
+
+include("Render/Render.jl")                             # Render-dispatch for output of docstrings.
 
 end 
