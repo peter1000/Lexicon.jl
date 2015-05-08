@@ -1,2 +1,5 @@
 *.cov
 *.mem
+
+# MkDocs
+site/
