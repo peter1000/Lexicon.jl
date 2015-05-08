@@ -64,6 +64,9 @@ Implement a rough sketch of *Lexicon Experimental* based on the new
     * Better github code reference (Speculative): https://github.com/MichaelHatherly/Docile.jl/issues/90
     * Line number to point to docstring start.: https://github.com/MichaelHatherly/Docile.jl/issues/86
 
+* On the fly renaming of meta !!section: path (speculative): https://github.com/peter1000/Lexicon.jl/issues
+
+
 ---
 
 Review *Lexicon Experimental* features and decide which should go into the *New Lexicon*
