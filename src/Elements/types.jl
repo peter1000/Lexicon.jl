@@ -94,7 +94,7 @@ type Page <: PageNode
 end
 page(name::AbstractString, conf::PreConfig, children...) =
         page(name, conf, Dict(), [children...])
-page(name::AbstractString, children...) = 
+page(name::AbstractString, children...) =
         page(name, PreConfig(), Dict(:autogenerate => (false, nothing)), [children...])
 
 function page(name::AbstractString, conf::PreConfig, meta::Dict, children::Vector)
@@ -167,14 +167,8 @@ function getnodename(nodeobj)
 end
 
 function getheadertype(s::AbstractString)
-    headertype = :none
-    if s[1] == '#'
-        startswith(s, "# ")         && (headertype = :header1)
-        startswith(s, "## ")        && (headertype = :header2)
-        startswith(s, "### ")       && (headertype = :header3)
-        startswith(s, "#### ")      && (headertype = :header4)
-        startswith(s, "##### ")     && (headertype = :header5)
-        startswith(s, "###### ")    && (headertype = :header6)
+    for i in 1:min(length(s), 7)
+        s[i] != '#' && return i < 2 ? :none : symbol("header$(i-1)")
     end
-    return headertype
+    return :none
 end
