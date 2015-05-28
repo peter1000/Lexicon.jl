@@ -6,9 +6,9 @@ const CATEGORIES = [:module,    :function, :method, :macro, :type,
 
 
 ## Config Nodes
-abstract ConfigNode
+abstract ConfigN
 
-type Config <: ConfigNode
+type Config <: ConfigN
     objfilter               :: Any
     style_obj               :: ASCIIString
 
@@ -21,7 +21,7 @@ type Config <: ConfigNode
 end
 config(; cargs...) = PreConfig(; cargs...)
 
-type PreConfig <: ConfigNode
+type PreConfig <: ConfigN
     cargs :: Dict{Symbol, Any}
 
     PreConfig(; cargs...) = new(Dict(cargs))
@@ -48,7 +48,7 @@ update_config!(config::Config, args...) = update_config!(config, Dict(args))
 ## Main structure nodes
 abstract SectionNode
 abstract PageNode
-abstract ContentNode
+abstract ContentN
 
 immutable NullSection <: SectionNode end
 immutable NullPage    <: PageNode    end
@@ -56,7 +56,7 @@ immutable NullPage    <: PageNode    end
 # Document
 type Document
     name        :: AbstractString
-    config      :: ConfigNode
+    config      :: ConfigN
     meta        :: Dict{Symbol, Any}
     children    :: Vector{SectionNode}
 end
@@ -75,7 +75,7 @@ end
 # Section
 type Section <: SectionNode
     name            :: AbstractString
-    config          :: ConfigNode
+    config          :: ConfigN
     meta            :: Dict{Symbol, Any}
     parent          :: Union(Document, SectionNode)
     children        :: Vector{Union(SectionNode, PageNode)}
@@ -87,10 +87,10 @@ section(name::AbstractString, children...) = section(name, PreConfig(), children
 # Page
 type Page <: PageNode
     name            :: AbstractString
-    config          :: ConfigNode
+    config          :: ConfigN
     meta            :: Dict{Symbol, Any}
     parent          :: SectionNode
-    children        :: Vector{ContentNode}
+    children        :: Vector{ContentN}
 end
 page(name::AbstractString, conf::PreConfig, children...) =
         page(name, conf, Dict(), [children...])
@@ -102,7 +102,7 @@ function page(name::AbstractString, conf::PreConfig, meta::Dict, children::Vecto
     for child in children
         if isa(child, Tuple)
             childconf = child[end]
-            isa(childconf, ConfigNode) ||
+            isa(childconf, ConfigN) ||
                     throw(ArgumentError("`page` content `Tuple`: Last item must be a `config`."))
             [push!(contentchildren, content(child[i], childconf)) for i in 1:length(child)-1]
         else
@@ -117,14 +117,14 @@ end
 
 
 ## Content nodes
-type Content <: ContentNode
+type Content <: ContentN
     typename    :: Symbol
-    config      :: ConfigNode
+    config      :: ConfigN
     parent      :: PageNode
     data        :: Any
 end
 
-function content(child, conf::ConfigNode)
+function content(child, conf::ConfigN)
     if isa(child, AbstractString)
         headertype = getheadertype(child)
         if headertype == :none
@@ -152,7 +152,7 @@ function postprocess!(parent, children::Vector)
         if isa(child, Union(Section, Page))
             isempty(child.children) || postprocess!(child, child.children)
         # these have no field children: but valid just skip them
-        elseif !isa(child, ContentNode)
+        elseif !isa(child, ContentN)
             throw(ArgumentError("`$(typeof(child))` is not a valid node structure type."))
         end
     end

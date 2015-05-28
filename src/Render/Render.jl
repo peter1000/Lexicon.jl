@@ -11,7 +11,7 @@ using Compat
 
 import Docile: Cache, Formats, Interface
 
-import ..Elements: Config, Document, Section, Page, ContentNode, getnodename
+import ..Elements: Config, Document, Section, Page, ContentN, getnodename
 
 include("md.jl")    # Markdown rendering.
 

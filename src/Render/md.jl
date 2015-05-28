@@ -11,8 +11,8 @@ type RenderedMarkdown
     outpages :: Vector{Tuple{AbstractString, AbstractString}}   # outpath, outcontent
 end
 
-# Render ContentNodes
-function render(children::Vector{ContentNode})
+# Render ContentN
+function render(children::Vector{ContentN})
     io = IOBuffer()
     for child in children
         child.typename == :module ? render!(io, child) : println(io, child.data)
@@ -25,8 +25,8 @@ function writemd(io::IO, docs::Interface.Docs{:md})
     println(io, docs.data)
 end
 
-# Render ContentNode Module: only temporar till: TODO proper obj signature is done
-function render!(io::IO, child::ContentNode)
+# Render ContentN Module: only temporar till: TODO proper obj signature is done
+function render!(io::IO, child::ContentN)
     mod = child.data
     config = child.config
     # Filter/Sorter
