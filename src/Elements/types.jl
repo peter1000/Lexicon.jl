@@ -46,59 +46,48 @@ update_config!(config::Config, args...) = update_config!(config, Dict(args))
 
 
 ## Main structure nodes
-abstract SectionNode
-abstract PageNode
-abstract ContentN
+abstract NodeT
 
-immutable NullSection <: SectionNode end
-immutable NullPage    <: PageNode    end
+immutable Document  <: NodeT end
+immutable Section   <: NodeT end
+immutable Page      <: NodeT end
+
+typealias NodeName Union(Symbol, AbstractString)
+
+type Node{T <: NodeT}
+   name     :: NodeName
+   config   :: ConfigN
+   meta     :: Dict{Symbol, Any}
+   parent                           # Children are type checked so no need here
+   children :: Vector               # type checked in the constructors
+end
 
 # Document
-type Document
-    name        :: AbstractString
-    config      :: ConfigN
-    meta        :: Dict{Symbol, Any}
-    children    :: Vector{SectionNode}
-end
-document(name::AbstractString, conf::PreConfig, children...) =
-        document(name, conf, Dict(), [children...])
-document(name::AbstractString, children...) = document(name, PreConfig(), children...)
+document(name::NodeName, children...) = document(name, PreConfig(), children...)
+document(name::NodeName, conf::PreConfig, children...) =
+    document(name, conf, Dict(), Node{Section}[children...])
 
-function document(name::AbstractString, conf::PreConfig, meta::Dict, children::Vector)
-    this = isempty(conf.cargs)                       ?
-            Document(name, Config(), meta, children) :
-            Document(name, update_config!(Config(), deepcopy(conf.cargs)), meta, children)
+function document(name::NodeName, conf::PreConfig, meta::Dict, children::Vector)
+    this = isempty(conf.cargs)                                     ?
+        Node{Document}(name, Config(), meta, Document(), children) :
+        Node{Document}(name, update_config!(Config(), deepcopy(conf.cargs)), meta, Document(), children)
+    this.parent = this
     isempty(children) || postprocess!(this, children)
     return this
 end
 
 # Section
-type Section <: SectionNode
-    name            :: AbstractString
-    config          :: ConfigN
-    meta            :: Dict{Symbol, Any}
-    parent          :: Union(Document, SectionNode)
-    children        :: Vector{Union(SectionNode, PageNode)}
-end
-section(name::AbstractString, conf::PreConfig, children...) =
-        Section(name, conf, Dict(:autogenerate => (false, nothing)), NullSection(), [children...])
-section(name::AbstractString, children...) = section(name, PreConfig(), children...)
+section(name::NodeName, children...) = section(name, PreConfig(), children...)
+section(name::NodeName, conf::PreConfig, children...) =
+    Node{Section}(name, conf, Dict(:autogenerate => (false, nothing)), Section(), Node{Page}[children...])
 
 # Page
-type Page <: PageNode
-    name            :: AbstractString
-    config          :: ConfigN
-    meta            :: Dict{Symbol, Any}
-    parent          :: SectionNode
-    children        :: Vector{ContentN}
-end
-page(name::AbstractString, conf::PreConfig, children...) =
-        page(name, conf, Dict(), [children...])
-page(name::AbstractString, children...) =
-        page(name, PreConfig(), Dict(:autogenerate => (false, nothing)), [children...])
+page(name::NodeName, children...) = page(name, PreConfig(), children...)
+page(name::NodeName, conf::PreConfig, children...) =
+    page(name, conf, Dict(:autogenerate => (false, nothing)), [children...])
 
-function page(name::AbstractString, conf::PreConfig, meta::Dict, children::Vector)
-    contentchildren = []
+function page(name::NodeName, conf::PreConfig, meta::Dict, children::Vector)
+    contentchildren = Vector{Content}()
     for child in children
         if isa(child, Tuple)
             childconf = child[end]
@@ -109,18 +98,18 @@ function page(name::AbstractString, conf::PreConfig, meta::Dict, children::Vecto
             push!(contentchildren, content(child, PreConfig()))
         end
     end
-    this = isempty(conf.cargs)                                                              ?
-            Page(name, PreConfig(), meta, NullSection(), contentchildren) :
-            Page(name, conf, meta, NullSection(), contentchildren)
+    this = isempty(conf.cargs)                                              ?
+            Node{Page}(name, PreConfig(), meta, Section(), contentchildren) :
+            Node{Page}(name, conf, meta, Section(), contentchildren)
     return this
 end
 
 
 ## Content nodes
-type Content <: ContentN
+type Content
     typename    :: Symbol
     config      :: ConfigN
-    parent      :: PageNode
+    parent      :: Union(Node{Page}, Page)
     data        :: Any
 end
 
@@ -128,12 +117,12 @@ function content(child::AbstractString, conf::ConfigN)
     headertype = getheadertype(child)
     if headertype == :none
         filename = abspath(child)
-        Content(:text, conf, NullPage(), isfile(filename) ? readall(filename) : child)
+        Content(:text, conf, Page(), isfile(filename) ? readall(filename) : child)
     else
-        Content(headertype, conf, NullPage(), child)
+        Content(headertype, conf, Page(), child)
     end
 end
-content(child::Module, conf::ConfigN) = Content(:module, conf, NullPage(), child)
+content(child::Module, conf::ConfigN) = Content(:module, conf, Page(), child)
 
 ## Related functions
 # sets: parents, final configuration
@@ -143,10 +132,10 @@ function postprocess!(parent, children::Vector)
         child.config = isempty(child.config.cargs)  ?
                             deepcopy(parent.config) :
                             update_config!(deepcopy(parent.config), deepcopy(child.config.cargs))
-        if isa(child, Union(Section, Page))
+        if isa(child, Union(Node{Section}, Node{Page}))
             isempty(child.children) || postprocess!(child, child.children)
-        # these have no field children: but valid just skip them
-        elseif !isa(child, ContentN)
+        # these have no field children: but valid so just skip them
+        elseif !isa(child, Content)
             throw(ArgumentError("`$(typeof(child))` is not a valid node structure type."))
         end
     end

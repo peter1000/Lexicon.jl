@@ -11,8 +11,8 @@ type RenderedMarkdown
     outpages :: Vector{Tuple{AbstractString, AbstractString}}   # outpath, outcontent
 end
 
-# Render ContentN
-function render(children::Vector{ContentN})
+# Render Content
+function render(children::Vector{Content})
     io = IOBuffer()
     for child in children
         child.typename == :module ? render!(io, child) : println(io, child.data)
@@ -25,8 +25,8 @@ function writemd(io::IO, docs::Interface.Docs{:md})
     println(io, docs.data)
 end
 
-# Render ContentN Module: only temporar till: TODO proper obj signature is done
-function render!(io::IO, child::ContentN)
+# Render Content Module: only temporar till: TODO proper obj signature is done
+function render!(io::IO, child::Content)
     mod = child.data
     config = child.config
     # Filter/Sorter
@@ -53,10 +53,10 @@ end
 function render!(outpages::Vector, children::Vector, outdir::UTF8String)
     for child in children
         isempty(child.children) && throw(EmptyRenderError("'$(getnodename(child))': '$(child.name) is empty."))
-        if isa(child, Section)
-            abs_outdir = joinpath(outdir, child.name)       # new out subdir
+        if isa(child, Node{Section})
+            abs_outdir = joinpath(outdir, string(child.name))  # new out subdir: account for any symbols
             render!(outpages, child.children, abs_outdir)
-        elseif isa(child, Page)
+        elseif isa(child, Node{Page})
             outpath = joinpath(outdir, "$(child.name).md")
             child.meta[:outpath] = outpath
             push!(outpages, (outpath, render(child.children)))
@@ -67,15 +67,16 @@ function render!(outpages::Vector, children::Vector, outdir::UTF8String)
     end
 end
 
-
-function markdown(outdir::AbstractString, document::Document)
-    abs_outdir = utf8(joinpath(abspath(outdir), document.name))
+## Main
+function markdown(outdir::AbstractString, document::Node{Document})
+    abs_outdir = utf8(joinpath(abspath(outdir), string(document.name)))
     outpages = Vector()
     isempty(document.children) && throw(EmptyRenderError("document: '$(document.name) is empty."))
 
     render!(outpages, document.children, abs_outdir)
     return RenderedMarkdown(abspath(outdir), outpages)
 end
+
 
 """
 !!summary(Write the documentation stored in RenderedMarkdown to disk.)
