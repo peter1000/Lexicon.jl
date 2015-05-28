@@ -159,12 +159,9 @@ function postprocess!(parent, children::Vector)
 end
 
 # get the method name for a node structure object
-function getnodename(nodeobj)
-    isa(nodeobj, Document)  && return "document"
-    isa(nodeobj, Section)   && return "section"
-    isa(nodeobj, Page)      && return "page"
-    throw(ArgumentError("`$(typeof(nodeobj))` is not a valid node structure type."))
-end
+getnodename(::Document)  = "document"
+getnodename(::Section)   = "section"
+getnodename(::Page)      = "page"
 
 function getheadertype(s::AbstractString)
     for i in 1:min(length(s), 7)
