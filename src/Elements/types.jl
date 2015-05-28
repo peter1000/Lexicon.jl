@@ -124,22 +124,16 @@ type Content <: ContentN
     data        :: Any
 end
 
-function content(child, conf::ConfigN)
-    if isa(child, AbstractString)
-        headertype = getheadertype(child)
-        if headertype == :none
-            filename = abspath(child)
-            Content(:text, conf, NullPage(), isfile(filename) ? readall(filename) : child)
-        else
-            Content(headertype, conf, NullPage(), child)
-        end
-    elseif isa(child, Module)
-        Content(:module, conf, NullPage(), child)
+function content(child::AbstractString, conf::ConfigN)
+    headertype = getheadertype(child)
+    if headertype == :none
+        filename = abspath(child)
+        Content(:text, conf, NullPage(), isfile(filename) ? readall(filename) : child)
     else
-        throw(ArgumentError("`$(typeof(child))` is not a valid `content` type."))
+        Content(headertype, conf, NullPage(), child)
     end
 end
-
+content(child::Module, conf::ConfigN) = Content(:module, conf, NullPage(), child)
 
 ## Related functions
 # sets: parents, final configuration
