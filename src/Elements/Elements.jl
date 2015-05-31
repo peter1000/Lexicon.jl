@@ -88,9 +88,9 @@ end
 
 function showconfig(io, n, indent)
     width = maxwidth(n.data)
-    for (k, v) in n.data
+    for k in sort(collect(keys(n.data)))
         key = string(pad(indent), k, " "^(width - length(string(k))))
-        println(io, key, " = ", repr(v), ",")
+        println(io, key, " = ", repr(n.data[k]), ",")
     end
 end
 
