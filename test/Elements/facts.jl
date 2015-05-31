@@ -9,7 +9,10 @@ import Lexicon.Elements:
     Document,
     Section,
     Page,
-    Docs
+    Docs,
+    findconfig,
+    getconfig,
+    addconfig
 
 facts("Elements.") do
 
@@ -164,9 +167,7 @@ facts("Elements.") do
         out = document(section(page(docs(""), title = "p"), title = "s"), title = "d")
 
         @fact (out.children[1].parent == out) => true
-
         @fact (out.children[1].children[1].parent == out.children[1]) => true
-
         @fact (out.children[1].children[1].children[1].parent == out.children[1].children[1]) => true
 
     end
@@ -183,6 +184,38 @@ facts("Elements.") do
 
         @fact (document(section(page(docs(""), title = "p"), title = "s"), title = "d") ==
             document(section(page(docs(""), title = "p"), title = "s"), title = "d")) => true
+
+    end
+
+    context("Findconfig.") do
+
+        out = document(section(section(page(docs("", doc = 1, title  = "docs",), p = 2,
+                        title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
+                        title = "Section",), title = "Docile Documentation", d = 5,)
+
+        @fact findconfig(out.children[1].children[1].children[1].children[1]) =>
+            @compat(Dict{Symbol,Any}(:title => "docs",:doc => 1, :p => 2, :ns => 3, :s => 4, :d => 5))
+
+    end
+
+    context("Get/Add config.") do
+
+        out = document(section(section(page(docs("", doc = 1, title  = "docs",), p = 2,
+                        title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
+                        title = "Section",), title = "Docile Documentation", d = 5,)
+
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :title) => "docs"
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :doc)   => 1
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :ns)    => 3
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :d)     => 5
+
+
+        out = document(section(page(docs(""), title = :name), title = :名字), title = "d")
+
+        @fact_throws ArgumentError addconfig(out, :title, "new title")
+        @fact addconfig(out, :newkey, "q")                                    => "q"
+        @fact addconfig(out.children[1], :newkey, :style)                     => :style
+        @fact addconfig(out.children[1].children[1], :newkey, "chinese 出名字") => "chinese 出名字"
 
     end
 
