@@ -6,6 +6,8 @@ using Compat, FactCheck
 
 import Lexicon
 
+include(joinpath("Utilities", "facts.jl"))
+
 include(joinpath("Elements", "facts.jl"))
 
 isinteractive() || FactCheck.exitstatus()
