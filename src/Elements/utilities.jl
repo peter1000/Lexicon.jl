@@ -26,11 +26,6 @@ function update!(d::Dict, other::Dict)
 end
 
 """
-Returns the value for key ``k``of the node's final configuration (inclusive parent configuration).
-"""
-getconfig(n::Node, k::Symbol) = findconfig(n)[k]
-
-"""
 Adds a new key ``k`` with value ``v`` to the ``node`` data dictionary .
 Throws an ArgumentError if the key exists.
 """

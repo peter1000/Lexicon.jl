@@ -11,7 +11,6 @@ import Lexicon.Elements:
     Page,
     Docs,
     findconfig,
-    getconfig,
     addconfig
 
 facts("Elements.") do
@@ -187,7 +186,7 @@ facts("Elements.") do
 
     end
 
-    context("Findconfig.") do
+    context("Find config.") do
 
         out = document(section(section(page(docs("", doc = 1, title  = "docs",), p = 2,
                         title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
@@ -198,17 +197,7 @@ facts("Elements.") do
 
     end
 
-    context("Get/Add config.") do
-
-        out = document(section(section(page(docs("", doc = 1, title  = "docs",), p = 2,
-                        title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
-                        title = "Section",), title = "Docile Documentation", d = 5,)
-
-        @fact getconfig(out.children[1].children[1].children[1].children[1], :title) => "docs"
-        @fact getconfig(out.children[1].children[1].children[1].children[1], :doc)   => 1
-        @fact getconfig(out.children[1].children[1].children[1].children[1], :ns)    => 3
-        @fact getconfig(out.children[1].children[1].children[1].children[1], :d)     => 5
-
+    context("Add config.") do
 
         out = document(section(page(docs(""), title = :name), title = :名字), title = "d")
 
