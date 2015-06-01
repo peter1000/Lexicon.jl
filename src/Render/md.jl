@@ -46,7 +46,8 @@ end
 
 function innerpage!(io::IO, s::AbstractString, emptyline::Bool)
     if getheadertype(s) == :none
-        println(io, s)
+        filename = abspath(s)
+        isfile(filename) ? print(io, readall(filename)) : println(io, s)
         return false
     else
         emptyline ? println(io, s) : (println(io); println(io, s))
@@ -72,7 +73,7 @@ function innerpage!(io::IO, mod::Module, emptyline::Bool)
         objname = string(obj)    # Replace that later
         println(io, "---\n")
         #println(io, string(config.style_obj, " ",  objname))
-        println(io, objname)
+        println(io, "#### $(objname)")
         println(io)
         writemime(io, "text/plain", Cache.getparsed(mod, obj))
         println(io)
