@@ -15,11 +15,11 @@ end
 
 include("Utilities.jl")
 
+include(joinpath("Externals", "Externals.jl"))
 include(joinpath("Elements", "Elements.jl"))
 include(joinpath("Render", "Render.jl"))
 include(joinpath("Query", "Query.jl"))
 include(joinpath("REPL", "REPL.jl"))
-include(joinpath("Externals", "Externals.jl"))
 
 end # module
 

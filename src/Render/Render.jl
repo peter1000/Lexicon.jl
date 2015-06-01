@@ -5,13 +5,19 @@ module Render
 """
 Render
 
+export save, markdown
+
 import ..Utilities: utf8checked!
 
-import ..Elements: Node, Document, Section, Page, Docs, rename
+import ..Elements: Node, Document, Section, Page, Docs, rename, getconfig, addconfig
+
+import ..Externals: writemkdocs
+
+import Docile: Cache, Formats
 
 using Compat
 
 include("utilities.jl")
-
+include("md.jl")            # Markdown rendering.
 
 end
