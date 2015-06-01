@@ -2,6 +2,7 @@
 
 Formats.parsedocs(::Formats.Format{Formats.MarkdownFormatter}, raw, mod, obj) = Markdown.parse(raw)
 
+## Prepare methods
 type RenderedMarkdown
     outdir      :: UTF8String
     outpages    :: Vector{Tuple{AbstractString, AbstractString}}
@@ -32,30 +33,63 @@ function inner!(outpages::Vector, layout::Tuple, n::Node{Page}, outdir::UTF8Stri
     push!(outpages, (outpath, inner(n)))
 end
 
+
+## Render methods
 function inner(n::Node{Page})
     io = IOBuffer()
+    emptyline = true    # avoids first line of page to be empty
     for child in n.children
-        innerpage!(io, child)
-        println(io)
+        emptyline = innerpage!(io, child, emptyline)
     end
     return takebuf_string(io)
 end
 
-function inner!(io::IO, n::Node{Docs})
-    println(io, "#### TODO: `Page Docs Nodes` not implemented yet")
+function innerpage!(io::IO, s::AbstractString, emptyline::Bool)
+    if getheadertype(s) == :none
+        println(io, s)
+        return false
+    else
+        emptyline ? println(io, s) : (println(io); println(io, s))
+        println(io)
+        return true
+    end
 end
 
-function innerpage!(io::IO, v)
-    println(io, "#### TODO: `Page Content` not implemented yet")
+function innerpage!(io::IO, n::Node{Docs}, emptyline::Bool)
+    for child in n.children
+        emptyline = innerpage!(io, child, emptyline)
+    end
+    println(io)
+    return true
 end
 
+function innerpage!(io::IO, mod::Module, emptyline::Bool)
+    println("#### TODO: `Page Docs Module` not implemented yet")
+    println(io, "#### TODO: `Page Docs Module` not implemented yet")
+    objects = Cache.objects(mod)
+
+    for obj in objects
+        objname = string(obj)    # Replace that later
+        println(io, "---\n")
+        #println(io, string(config.style_obj, " ",  objname))
+        println(io, objname)
+        println(io)
+        writemime(io, "text/plain", Cache.getparsed(mod, obj))
+        println(io)
+    end
+    println(io)
+    return true
+end
+
+
+## User interface
 function markdown(outdir::AbstractString, document::Node{Document})
     checkconfig!(document)
     outpages = Vector()
     layout = Vector([(getconfig(document, :title), [])])
     curlayout = layout[1]
     render!(outpages, curlayout, document, convert(UTF8String, ""))
-    return RenderedMarkdown(abspath(outdir), outpages, layout, deepcopy(document))
+    return RenderedMarkdown(abspath(outdir), outpages, layout, document)
 end
 
 function save(rmd::RenderedMarkdown; remove_destination=false)
@@ -80,4 +114,5 @@ function save(rmd::RenderedMarkdown; remove_destination=false)
     end
     # mkdocs yaml
     haskey(rmd.document.data, :mkdocsyaml) && rmd.document.data[:mkdocsyaml] && writemkdocs(rmd)
+    return rmd
 end

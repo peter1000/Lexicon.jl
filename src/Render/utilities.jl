@@ -29,3 +29,10 @@ end
 checkinner!(n) = return
 checkinner!(n::Node{Section}) = checkconfig!(n)
 checkinner!(n::Node{Page})    = checkconfig!(n)
+
+function getheadertype(s::AbstractString)
+    for i in 1:min(length(s), 7)
+        s[i] != '#' && return i < 2 ? :none : symbol("header$(i-1)")
+    end
+    return :none
+end
