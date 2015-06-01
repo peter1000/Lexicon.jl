@@ -39,12 +39,12 @@ function inner(n::Node{Page})
     io = IOBuffer()
     emptyline = true    # avoids first line of page to be empty
     for child in n.children
-        emptyline = innerpage!(io, child, emptyline)
+        emptyline = innerpage!(io, n, child, emptyline)
     end
     return takebuf_string(io)
 end
 
-function innerpage!(io::IO, s::AbstractString, emptyline::Bool)
+function innerpage!(io::IO, ::Node, s::AbstractString, emptyline::Bool)
     if getheadertype(s) == :none
         filename = abspath(s)
         isfile(filename) ? print(io, readall(filename)) : println(io, s)
@@ -56,20 +56,23 @@ function innerpage!(io::IO, s::AbstractString, emptyline::Bool)
     end
 end
 
-function innerpage!(io::IO, n::Node{Docs}, emptyline::Bool)
+function innerpage!(io::IO, ::Node, n::Node{Docs}, emptyline::Bool)
     for child in n.children
-        emptyline = innerpage!(io, child, emptyline)
+        emptyline = innerpage!(io, n, child, emptyline)
     end
     println(io)
     return true
 end
 
-function innerpage!(io::IO, mod::Module, emptyline::Bool)
+function innerpage!(io::IO, n::Node, mod::Module, emptyline::Bool)
     println("#### TODO: `Page Docs Module` not implemented yet")
     println(io, "#### TODO: `Page Docs Module` not implemented yet")
     objects = Cache.objects(mod)
+    # get any filter config for this node
+    conf = findconfig(n)
+    objs = haskey(conf, :filter) ? filter(conf[:filter], objects) : objects
 
-    for obj in objects
+    for obj in objs
         objname = string(obj)    # Replace that later
         println(io, "---\n")
         #println(io, string(config.style_obj, " ",  objname))
@@ -78,7 +81,6 @@ function innerpage!(io::IO, mod::Module, emptyline::Bool)
         writemime(io, "text/plain", Cache.getparsed(mod, obj))
         println(io)
     end
-    println(io)
     return true
 end
 

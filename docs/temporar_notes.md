@@ -5,6 +5,16 @@ Required config options:
 - each document, section, page must have a configuration key: `:title`
 - additional a key: `:outname` can be if it is missing one is generated from the title
 
+Optional config options:
+
+- `:filter` for `docs` nodes.  is applied to a modules object
+
+  ```julia
+  objects = Cache.objects(mod)
+  objs = filter(conf[:filter], objects
+  ```
+
+  Example: `docs(Docile.Cache, filter = obj -> isa(obj, Function) || isa(obj, Method))`
 
 **Output structure**
 
@@ -13,7 +23,7 @@ Required config options:
   * EXCEPTION: if a Section has a config option key: `nosubdir` than no new subdir will be created.
     Value can be anything.
     e.g. useful for setting an index page to the output root folder.
-    
+
 
 - Page produce a file named: after the value ofthe nodes configuration `:outname` ending in `.md`
   e.g. `:outname = "introduction`  than the page filename will be `introduction.md`
