@@ -5,6 +5,8 @@ module Utilities
 """
 Utilities
 
+export isexported
+
 import Docile.Collector: QualifiedSymbol, Aside
 
 import Docile.Utilities: isexpr
@@ -53,5 +55,10 @@ function nameof(mod::Module, obj::Function)
         throw(ArgumentError("'$obj' wrong category: $(meta[:category])"))
     end
 end
+
+"""
+Is the documented object ``obj`` been exported from the given module ``mod``?
+"""
+isexported(mod::Module, obj) = nameof(mod, obj) in names(mod)
 
 end
