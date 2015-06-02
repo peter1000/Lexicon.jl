@@ -5,7 +5,7 @@ module Utilities
 """
 Utilities
 
-export isexported
+export isexported, iscategory
 
 import Docile.Collector: QualifiedSymbol, Aside
 
@@ -60,5 +60,11 @@ end
 Is the documented object ``obj`` been exported from the given module ``mod``?
 """
 isexported(mod::Module, obj) = nameof(mod, obj) in names(mod)
+
+"""
+Is the object ``obj`` from module ``mod`` a Docile category ``cat`` or one of the categories ``cats``.
+"""
+iscategory(mod::Module, obj, cat::Symbol)          = Cache.getmeta(mod, obj)[:category] == cat
+iscategory(mod::Module, obj, cats::Vector{Symbol}) = Cache.getmeta(mod, obj)[:category] in cats
 
 end

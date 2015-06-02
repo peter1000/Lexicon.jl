@@ -16,6 +16,9 @@ Optional config options:
 
   Example: `docs(Docile.Cache, filter = obj -> isa(obj, Function) || isa(obj, Method))`
 
+  Example: `docs(Cache, filter = obj -> iscategory(Cache, obj, [:function, :method, :macro])`
+
+
 **Output structure**
 
 - Section produce a subfolder named: after the value ofthe nodes configuration `:outname`

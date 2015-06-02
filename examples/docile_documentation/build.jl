@@ -1,15 +1,8 @@
-import Lexicon.Elements:
+import Lexicon.Elements: document, section, page, docs, config
 
-    document,
-    section,
-    page,
-    docs,
-    config
+import Lexicon.Utilities: iscategory
 
-import Lexicon.Render:
-
-    markdown,
-    save
+import Lexicon.Render: markdown, save
 
 
 import Docile
@@ -33,9 +26,13 @@ cd(dirname(@__FILE__)) do
         section(
             page(
                 "# Docile.Cache",
-                "## Functions & Methods",
-                docs(Docile.Cache, filter = obj -> isa(obj, Function) || isa(obj, Method)),
-                title = "Docile.Cache"),
+                "## Functions & Methods & Macros",
+                docs(Cache, filter = obj -> iscategory(Cache, obj, [:function, :method, :macro])),
+                "## Globals, Types",
+                docs(Cache, filter = obj -> iscategory(Cache, obj, [:global, :type, :typealias])),
+                "## Asides",
+                docs(Cache, filter = obj -> iscategory(Cache, obj, [:aside])),
+                title = "Cache"),
             title  = "API",
             ),
         title = "Docile.jl",
