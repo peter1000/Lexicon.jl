@@ -18,11 +18,12 @@ function writemkdocs!(io::IO, rmd)
     conf = deepcopy(rmd.document.data)
     conf[:docs_dir] = basename(rmd.outdir)
     haskey(conf, :site_name) || (conf[:site_name] = conf[:title])
-    [haskey(conf, k) ||
-        throw(ArgumentError("Document '$(conf[:title])' has no config key ':$k'.")) for k in keys]
-
-    [haskey(conf, k) && push!(keys, k) for k in optionalkeys]
-
+    for k in keys
+        haskey(conf, k) || throw(ArgumentError("Document '$(conf[:title])' has no config key ':$k'."))
+    end
+    for k in optionalkeys
+        [haskey(conf, k) && push!(keys, k)
+    end
     writemkdocs(io, conf, keys)
     println(io, "pages:")
     writemkdocs(io, -1, rmd.layout[1][2])
