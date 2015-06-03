@@ -18,6 +18,6 @@ import Docile: Cache, Formats
 using Compat
 
 include("utilities.jl")
-include("md.jl")            # Markdown rendering.
+include("markdown.jl")            # Markdown rendering.
 
 end
