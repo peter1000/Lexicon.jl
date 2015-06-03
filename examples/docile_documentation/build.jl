@@ -1,15 +1,41 @@
 import Lexicon.Elements: document, section, page, docs, config
 
-import Lexicon.Utilities: iscategory
+import Lexicon.Utilities: iscategory, isexported
 
 import Lexicon.Render: markdown, save
 
 
 import Docile
-import Docile: Cache
+import Docile: Cache, Collector, Extensions, Formats, Interface, Legacy, Runner, Utilities
 
 cd(dirname(@__FILE__)) do
 
+    pages  = [page(
+                "# $m",
+                "## External",
+                "### Modules, Functions, Methods & Macros",
+                docs(m, filter = obj -> iscategory(m, obj, [:module, :function, :method, :macro]) && isexported(m, obj)),
+                "### Globals, Types, Asides",
+                docs(m, filter = obj -> iscategory(m, obj, [:global, :type, :typealias, :aside]) && isexported(m, obj)),
+                "## Internal",
+                "### Modules, Functions, Methods & Macros",
+                docs(m, filter = obj -> iscategory(m, obj, [:module, :function, :method, :macro]) && !isexported(m, obj)),
+                "### Globals, Types, Asides",
+                docs(m, filter = obj -> iscategory(m, obj, [:global, :type, :typealias, :aside]) && !isexported(m, obj)),
+                title = "$m")
+
+                for m in [
+                    Docile,
+                    Cache,
+                    Collector,
+                    Extensions,
+                    Formats,
+                    Interface,
+                    Legacy,
+                    Runner,
+                    Utilities,
+                    ]
+            ]
     # Generate and save the documentation        
     out = document(
         section(
@@ -24,15 +50,7 @@ cd(dirname(@__FILE__)) do
             title  = "Manual",
             ),
         section(
-            page(
-                "# Docile.Cache",
-                "## Functions & Methods & Macros",
-                docs(Cache, filter = obj -> iscategory(Cache, obj, [:function, :method, :macro])),
-                "## Globals, Types",
-                docs(Cache, filter = obj -> iscategory(Cache, obj, [:global, :type, :typealias])),
-                "## Asides",
-                docs(Cache, filter = obj -> iscategory(Cache, obj, [:aside])),
-                title = "Cache"),
+            pages...,
             title  = "API",
             ),
         title = "Docile.jl",

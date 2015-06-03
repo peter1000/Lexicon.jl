@@ -7,7 +7,7 @@ Render
 
 export save, markdown
 
-import ..Utilities: utf8checked!
+import ..Utilities: utf8checked!, nameof
 
 import ..Elements: Node, Document, Section, Page, Docs, rename, addconfig, findconfig
 

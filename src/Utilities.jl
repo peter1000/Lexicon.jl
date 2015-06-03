@@ -26,11 +26,11 @@ end
 Get the ``Symbol`` representing an object such as ``Function`` or ``Method``.
 """
 nameof(s::Symbol) = s
-nameof(mod::Module, obj::Symbol)            = obj
-nameof(mod::Module, obj::Module)            = module_name(obj)
-nameof(mod::Module, obj::Method)            = nameof(Cache.getmeta(mod, obj)[:code])
-nameof(mod::Module, obj::DataType)          = obj.name.name
-nameof(mod::Module, obj::QualifiedSymbol)   = symbol(last(split(string(obj), '.')))
+nameof(m::Module, obj::Symbol)            = obj
+nameof(m::Module, obj::Module)            = module_name(obj)
+nameof(m::Module, obj::Method)            = nameof(Cache.getmeta(m, obj)[:code])
+nameof(m::Module, obj::DataType)          = obj.name.name
+nameof(m::Module, obj::QualifiedSymbol)   = symbol(last(split(string(obj), '.')))
 
 function  nameof(x::Expr)
     isa(x.args[1], Bool)  ?
@@ -40,13 +40,13 @@ function  nameof(x::Expr)
                       nameof(x.args[1])
 end
 
-function nameof(mod::Module, obj::Aside)
-    linenumber, path = Cache.getmeta(mod, obj)[:textsource]
+function nameof(m::Module, obj::Aside)
+    linenumber, path = Cache.getmeta(m, obj)[:textsource]
     return symbol("aside_$(first(splitext(basename(path))))_L$(linenumber)")
 end
 
-function nameof(mod::Module, obj::Function)
-    meta = Cache.getmeta(mod, obj)
+function nameof(m::Module, obj::Function)
+    meta = Cache.getmeta(m, obj)
     if meta[:category] == :function
         obj.env.name
     elseif meta[:category] == :macro
@@ -57,14 +57,14 @@ function nameof(mod::Module, obj::Function)
 end
 
 """
-Is the documented object ``obj`` been exported from the given module ``mod``?
+Is the documented object ``obj`` been exported from the given module ``m``?
 """
-isexported(mod::Module, obj) = nameof(mod, obj) in names(mod)
+isexported(m::Module, obj) = nameof(m, obj) in names(m)
 
 """
-Is the object ``obj`` from module ``mod`` a Docile category ``cat`` or one of the categories ``cats``.
+Is the object ``obj`` from module ``m`` a Docile category ``cat`` or one of the categories ``cats``.
 """
-iscategory(mod::Module, obj, cat::Symbol)          = Cache.getmeta(mod, obj)[:category] == cat
-iscategory(mod::Module, obj, cats::Vector{Symbol}) = Cache.getmeta(mod, obj)[:category] in cats
+iscategory(m::Module, obj, cat::Symbol)          = Cache.getmeta(m, obj)[:category] == cat
+iscategory(m::Module, obj, cats::Vector{Symbol}) = Cache.getmeta(m, obj)[:category] in cats
 
 end

@@ -1,6 +1,6 @@
 ["Markdown rendering."]
 
-Formats.parsedocs(::Formats.Format{Formats.MarkdownFormatter}, raw, mod, obj) = Markdown.parse(raw)
+Formats.parsedocs(::Formats.Format{Formats.MarkdownFormatter}, raw, m, obj) = Markdown.parse(raw)
 
 ## Prepare methods
 type RenderedMarkdown
@@ -64,21 +64,20 @@ function innerpage!(io::IO, ::Node, n::Node{Docs}, emptyline::Bool)
     return true
 end
 
-function innerpage!(io::IO, n::Node, mod::Module, emptyline::Bool)
-    println("#### TODO: `Page Docs Module` not implemented yet")
-    println(io, "#### TODO: `Page Docs Module` not implemented yet")
-    objects = Cache.objects(mod)
+function innerpage!(io::IO, n::Node, m::Module, emptyline::Bool)
+    warn("!! TODO: `Page Docs Module` not finished yet!!")
+    objects = Cache.objects(m)
     # get any filter config for this node
     conf = findconfig(n)
     objs = haskey(conf, :filter) ? filter(conf[:filter], objects) : objects
 
     for obj in objs
-        objname = string(obj)    # Replace that later
+        objname = nameof(m, obj)    # Replace that later
         println(io, "---\n")
         #println(io, string(config.style_obj, " ",  objname))
         println(io, "#### $(objname)")
         println(io)
-        writemime(io, "text/plain", Cache.getparsed(mod, obj))
+        writemime(io, "text/plain", Cache.getparsed(m, obj))
         println(io)
     end
     return true
