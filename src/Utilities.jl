@@ -56,6 +56,8 @@ isexported(m::Module, obj) = nameof(m, obj) in Cache.getmeta(Cache.getmodule(m))
 """
 Is the object ``obj`` from module ``m`` a Docile category ``cat`` or one of the categories ``cats``.
 """
+:iscategory
+
 iscategory(m::Module, obj, cat::Symbol)          = Cache.getmeta(m, obj)[:category] == cat
 iscategory(m::Module, obj, cats::Vector{Symbol}) = Cache.getmeta(m, obj)[:category] in cats
 
