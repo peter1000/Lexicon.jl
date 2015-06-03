@@ -28,7 +28,7 @@ Get the ``Symbol`` representing an object such as ``Function`` or ``Method``.
 nameof(s::Symbol) = s
 nameof(m::Module, obj::Symbol)            = obj
 nameof(m::Module, obj::Module)            = module_name(obj)
-nameof(m::Module, obj::Method)            = nameof(Cache.getmeta(m, obj)[:code])
+nameof(m::Module, obj::Method)            = obj.func.code.name
 nameof(m::Module, obj::DataType)          = obj.name.name
 nameof(m::Module, obj::QualifiedSymbol)   = obj.sym
 
