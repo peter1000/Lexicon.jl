@@ -5,18 +5,18 @@ Formats.parsedocs(::Formats.Format{Formats.MarkdownFormatter}, raw, m, obj) = Ma
 ## Prepare methods
 type RenderedMarkdown
     outdir      :: UTF8String
-    outpages    :: Vector{Tuple{AbstractString, AbstractString}}
+    outpages    :: Dict{AbstractString, AbstractString}
     layout      :: Vector{Tuple{UTF8String, Vector}}
     document    :: Node{Document}
 end
 
-function render!{T}(outpages::Vector, layout::Tuple, n::Node{T}, outdir::UTF8String)
+function render!{T}(outpages::Dict, layout::Tuple, n::Node{T}, outdir::UTF8String)
     for child in n.children
         inner!(outpages, layout, child, outdir)
     end
 end
 
-function inner!(outpages::Vector, layout::Tuple, n::Node{Section}, outdir::UTF8String)
+function inner!(outpages::Dict, layout::Tuple, n::Node{Section}, outdir::UTF8String)
     haskey(n.data, :nosubdir) && return render!(outpages, layout, n, outdir)
 
     outdir = joinpath(outdir, findconfig(n)[:outname])
@@ -25,12 +25,12 @@ function inner!(outpages::Vector, layout::Tuple, n::Node{Section}, outdir::UTF8S
     render!(outpages, curlayout, n, outdir)
 end
 
-function inner!(outpages::Vector, layout::Tuple, n::Node{Page}, outdir::UTF8String)
+function inner!(outpages::Dict, layout::Tuple, n::Node{Page}, outdir::UTF8String)
     outpath = joinpath(outdir, "$(findconfig(n)[:outname]).md")
     curlayout = (findconfig(n)[:title], outpath)
     push!(layout[2], curlayout)
     addconfig(n, :outpath,  outpath)
-    push!(outpages, (outpath, inner(n)))
+    outpages[outpath] = inner(n)
 end
 
 
@@ -87,7 +87,7 @@ end
 ## User interface
 function markdown(outdir::AbstractString, document::Node{Document})
     checkconfig!(document)
-    outpages = Vector()
+    outpages = Dict()
     layout = Vector([(findconfig(document)[:title], [])])
     curlayout = layout[1]
     render!(outpages, curlayout, document, convert(UTF8String, ""))
