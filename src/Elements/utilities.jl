@@ -1,12 +1,11 @@
 ["Helper functions."]
 
 """
-Find the final configuration fo node `n`.
+Find the final configuration fo node ``n``.
 
-Search begins with the node `n` itself followed by any parent `Node` configuration setting.
+Search begins with the node ``n`` itself followed by any parent node configuration setting.
 """
 function findconfig(n::Node)
-    local config
     # Stage 1: nodes's config.
     config = n.data
 
@@ -26,8 +25,8 @@ function update!(d::Dict, other::Dict)
 end
 
 """
-Adds a new key ``k`` with value ``v`` to the ``node`` data dictionary .
-Throws an ArgumentError if the key exists.
+Adds a new key ``k`` with value ``v`` to the node's data dictionary .
+Throws an ``ArgumentError`` if the key exists.
 """
 function addconfig{T}(n::Node{T}, k::Symbol, v)
     haskey(n.data, k) && throw(ArgumentError("'$(rename(T))' has already a key ':$k'."))

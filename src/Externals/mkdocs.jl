@@ -1,7 +1,7 @@
 const INDENT_WIDTH = 4
 pad(indents) = (" "^INDENT_WIDTH)^indents
 
-# write a mkdocs yaml file: takes settings from `rmd` RenderedMarkdown
+# write a mkdocs yaml file: takes settings from ``rmd`` RenderedMarkdown
 function writemkdocs(rmd)
     abs_path = joinpath(dirname(rmd.outdir), "mkdocs.yml")
     pathdir = dirname(abs_path)
