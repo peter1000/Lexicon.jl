@@ -30,14 +30,12 @@ nameof(m::Module, obj::Symbol)            = obj
 nameof(m::Module, obj::Module)            = module_name(obj)
 nameof(m::Module, obj::Method)            = nameof(Cache.getmeta(m, obj)[:code])
 nameof(m::Module, obj::DataType)          = obj.name.name
-nameof(m::Module, obj::QualifiedSymbol)   = symbol(last(split(string(obj), '.')))
+nameof(m::Module, obj::QualifiedSymbol)   = obj.sym
 
-function  nameof(x::Expr)
-    isa(x.args[1], Bool)  ?
-        nameof(x.args[2]) :
-        isexpr(x.args[1], :(.)) ?
-                      x.args[1] :
-                      nameof(x.args[1])
+function nameof(x::Expr)
+    isa(x.args[1], Bool)    && return nameof(x.args[2])
+    isexpr(x.args[1], :(.)) && return x.args[1]
+    nameof(x.args[1])
 end
 
 function nameof(m::Module, obj::Aside)
@@ -47,13 +45,7 @@ end
 
 function nameof(m::Module, obj::Function)
     meta = Cache.getmeta(m, obj)
-    if meta[:category] == :function
-        obj.env.name
-    elseif meta[:category] == :macro
-        symbol(string("@", nameof(meta[:code])))
-    else
-        throw(ArgumentError("'$obj' wrong category: $(meta[:category])"))
-    end
+    meta[:category] == :function ? obj.env.name : symbol(string("@", nameof(meta[:code])))
 end
 
 """
