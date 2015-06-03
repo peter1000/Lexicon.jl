@@ -4,10 +4,10 @@ Formats.parsedocs(::Formats.Format{Formats.MarkdownFormatter}, raw, m, obj) = Ma
 
 ## Prepare methods
 type RenderedMarkdown
-    outdir      :: UTF8String
-    outpages    :: Dict{AbstractString, AbstractString}
-    layout      :: Vector{Tuple{UTF8String, Vector}}
-    document    :: Node{Document}
+    outdir   :: UTF8String
+    outpages :: Dict{AbstractString, AbstractString}
+    layout   :: Vector{Tuple{UTF8String, Vector}}
+    document :: Node{Document}
 end
 
 function render!{T}(outpages::Dict, layout::Tuple, n::Node{T}, outdir::UTF8String)
@@ -94,14 +94,14 @@ function markdown(outdir::AbstractString, document::Node{Document})
     return RenderedMarkdown(abspath(outdir), outpages, layout, document)
 end
 
-function save(rmd::RenderedMarkdown; remove_destination=false)
+function save(rmd::RenderedMarkdown; remove_destination = false)
     if ispath(rmd.outdir)
         if remove_destination
-            rm(rmd.outdir; recursive=true)
+            rm(rmd.outdir; recursive = true)
         else
             throw(ArgumentError(string("""
                ``outdir`` exists.
-               ``remove_destination=true`` is required to remove it before saving.
+               ``remove_destination = true`` is required to remove it before saving.
                outdir: $(rmd.outdir)
                """)))
         end

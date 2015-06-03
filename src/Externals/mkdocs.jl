@@ -22,7 +22,7 @@ function writemkdocs!(io::IO, rmd)
         haskey(conf, k) || throw(ArgumentError("Document '$(conf[:title])' has no config key ':$k'."))
     end
     for k in optionalkeys
-        [haskey(conf, k) && push!(keys, k)
+        haskey(conf, k) && push!(keys, k)
     end
     writemkdocs(io, conf, keys)
     println(io, "pages:")
