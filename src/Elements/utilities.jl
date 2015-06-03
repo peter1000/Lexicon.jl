@@ -1,10 +1,6 @@
 ["Helper functions."]
 
-"""
-Return the value stored for the given key, or the given default value if no mapping for the key is present.
-Search begins with the node ``n`` itself followed by any parent node configuration setting.
-"""
-function getconfig(n::Node, key::Symbol, default::Any=:notfound)
+function getconfig(n::Node, key::Symbol, default = :notfound)
     haskey(n.data, key) && return n.data[key]
     # Stage 2: Parent's config.
     while isdefined(n, :parent)
