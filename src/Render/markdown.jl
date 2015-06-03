@@ -99,9 +99,11 @@ function save(rmd::RenderedMarkdown; remove_destination=false)
         if remove_destination
             rm(rmd.outdir; recursive=true)
         else
-            throw(ArgumentError(string("'save(): outdir' exists. ``remove_destination=true`` ",
-                                       "is required to remove it before saving.\n",
-                                       "outdir: $(rmd.outdir)\n\n")))
+            throw(ArgumentError(string("""
+               ``outdir`` exists.
+               ``remove_destination=true`` is required to remove it before saving.
+               outdir: $(rmd.outdir)
+               """)))
         end
     end
     mkpath(rmd.outdir)
