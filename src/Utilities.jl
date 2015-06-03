@@ -49,9 +49,9 @@ function nameof(m::Module, obj::Function)
 end
 
 """
-Is the documented object ``obj`` been exported from the given module ``m``?
+Is the documented object ``obj`` exported from the given module ``m``?
 """
-isexported(m::Module, obj) = nameof(m, obj) in names(m)
+isexported(m::Module, obj) = nameof(m, obj) in Cache.getmeta(Cache.getmodule(m))[:exports]
 
 """
 Is the object ``obj`` from module ``m`` a Docile category ``cat`` or one of the categories ``cats``.
