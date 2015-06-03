@@ -10,7 +10,7 @@ import Lexicon.Elements:
     Section,
     Page,
     Docs,
-    findconfig,
+    getconfig,
     addconfig
 
 facts("Elements.") do
@@ -186,14 +186,22 @@ facts("Elements.") do
 
     end
 
-    context("Find config.") do
+    context("Get config.") do
 
         out = document(section(section(page(docs("", doc = 1, title  = "docs",), p = 2,
                         title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
                         title = "Section",), title = "Docile Documentation", d = 5,)
 
-        @fact findconfig(out.children[1].children[1].children[1].children[1]) =>
-            @compat(Dict{Symbol,Any}(:title => "docs",:doc => 1, :p => 2, :ns => 3, :s => 4, :d => 5))
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :title) => "docs"
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :doc)   => 1
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :p)     => 2
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :ns)    => 3
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :s)     => 4
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :d)     => 5
+
+        @fact getconfig(out.children[1].children[1].children[1].children[1], :someother) => :notfound
+
+        @fact getconfig(out.children[1].children[1], :d) => 5
 
     end
 

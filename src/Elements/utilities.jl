@@ -1,27 +1,17 @@
 ["Helper functions."]
 
 """
-Find the final configuration fo node ``n``.
-
+Return the value stored for the given key, or the given default value if no mapping for the key is present.
 Search begins with the node ``n`` itself followed by any parent node configuration setting.
 """
-function findconfig(n::Node)
-    # Stage 1: nodes's config.
-    config = n.data
-
+function getconfig(n::Node, key::Symbol, default::Any=:notfound)
+    haskey(n.data, key) && return n.data[key]
     # Stage 2: Parent's config.
     while isdefined(n, :parent)
         n = n.parent
-        update!(config, n.data)
+        haskey(n.data, key) && return n.data[key]
     end
-    config
-end
-
-function update!(d::Dict, other::Dict)
-    for (k,v) in other
-        haskey(d, k) || (d[k] = v)
-    end
-    d
+    default
 end
 
 """
