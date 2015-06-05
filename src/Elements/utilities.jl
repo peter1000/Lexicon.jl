@@ -1,6 +1,6 @@
 ["Helper functions."]
 
-function getconfig(n::Node, key::Symbol, default = :notfound)
+function findconfig(n::Node, key::Symbol, default = :notfound)
     haskey(n.data, key) && return n.data[key]
     # Stage 2: Parent's config.
     while isdefined(n, :parent)

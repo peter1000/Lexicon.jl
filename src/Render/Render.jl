@@ -9,7 +9,7 @@ export save, markdown
 
 import ..Utilities: utf8checked!, nameof
 
-import ..Elements: Node, Document, Section, Page, Docs, rename, addconfig, getconfig
+import ..Elements: Node, Document, Section, Page, Docs, rename, addconfig, findconfig
 
 import ..Externals: writemkdocs
 
