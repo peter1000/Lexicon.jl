@@ -19,15 +19,15 @@ end
 function inner!(outpages::Dict, layout::Tuple, n::Node{Section}, outdir::UTF8String)
     haskey(n.data, :nosubdir) && return render!(outpages, layout, n, outdir)
 
-    outdir = joinpath(outdir, findconfig(n, :outname))
-    curlayout = (findconfig(n, :title), [])
+    outdir = joinpath(outdir, get(findconfig(n, :outname, UTF8String)))
+    curlayout = (get(findconfig(n, :title, UTF8String)), [])
     push!(layout[2], curlayout)
     render!(outpages, curlayout, n, outdir)
 end
 
 function inner!(outpages::Dict, layout::Tuple, n::Node{Page}, outdir::UTF8String)
-    outpath = joinpath(outdir, "$(findconfig(n, :outname)).md")
-    curlayout = (findconfig(n, :title), outpath)
+    outpath = joinpath(outdir, "$(get(findconfig(n, :outname, UTF8String))).md")
+    curlayout = (get(findconfig(n, :title, UTF8String)), outpath)
     push!(layout[2], curlayout)
     addconfig(n, :outpath,  outpath)
     outpages[outpath] = inner(n)
@@ -68,10 +68,8 @@ function innerpage!(io::IO, n::Node, m::Module, emptyline::Bool)
     warn("!! TODO: `Page Docs Module` not finished yet!!")
     objects = Cache.objects(m)
     # get any filter config for this node
-    f = findconfig(n, :filter)
-    objs = f != :notfound ? filter(f, objects) : objects
-    # objs = filter(findconfig(n, :filter, obj -> true), objects)   or this would also be ok
-
+    f = findconfig(n, :filter, Function)
+    objs = isnull(f) ? objects : filter(get(f), objects)
     for obj in objs
         objname = nameof(m, obj)    # Replace that later
         println(io, "---\n")
@@ -88,7 +86,7 @@ end
 function markdown(outdir::AbstractString, document::Node{Document})
     checkconfig!(document)
     outpages = Dict()
-    layout = Vector([(findconfig(document, :title), [])])
+    layout = Vector([(get(findconfig(document, :title, UTF8String)), [])])
     curlayout = layout[1]
     render!(outpages, curlayout, document, convert(UTF8String, ""))
     return RenderedMarkdown(abspath(outdir), outpages, layout, document)

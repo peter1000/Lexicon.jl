@@ -192,16 +192,18 @@ facts("Elements.") do
                         title  = "page",), title  = "Nested Section", ns = 3,), s = 4,
                         title = "Section",), title = "Docile Documentation", d = 5,)
 
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :title) => "docs"
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :doc)   => 1
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :p)     => 2
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :ns)    => 3
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :s)     => 4
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :d)     => 5
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :title, AbstractString)) => "docs"
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :doc, Int))   => 1
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :p, Int))     => 2
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :ns, Int))    => 3
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :s, Int))     => 4
+        @fact get(findconfig(out.children[1].children[1].children[1].children[1], :d, Int))     => 5
 
-        @fact findconfig(out.children[1].children[1].children[1].children[1], :someother) => :notfound
+        value = findconfig(out.children[1].children[1].children[1].children[1], :someother, Any)
+        @fact isnull(value) => true
+        @fact_throws NullException get(value)
 
-        @fact findconfig(out.children[1].children[1], :d) => 5
+        @fact get(findconfig(out.children[1].children[1], :d, Int)) => 5
 
     end
 
