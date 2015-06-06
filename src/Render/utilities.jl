@@ -36,3 +36,9 @@ function getheadertype(s::AbstractString)
     end
     return :none
 end
+
+function objectsfiltered(n::Node, m::Module)
+    objects = Cache.objects(m)
+    f = findconfig(n, :filter, Function)
+    objects = isnull(f) ? objects : filter(get(f), objects)
+end

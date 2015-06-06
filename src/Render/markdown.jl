@@ -66,11 +66,8 @@ end
 
 function innerpage!(io::IO, n::Node, m::Module, emptyline::Bool)
     warn("!! TODO: `Page Docs Module` not finished yet!!")
-    objects = Cache.objects(m)
-    # get any filter config for this node
-    f = findconfig(n, :filter, Function)
-    objs = isnull(f) ? objects : filter(get(f), objects)
-    for obj in objs
+    objects = objectsfiltered(n, m)
+    for obj in objects
         objname = nameof(m, obj)    # Replace that later
         println(io, "---\n")
         println(io, "#### $(objname)")    # Replace that later
