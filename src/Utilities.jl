@@ -61,4 +61,15 @@ Is the object ``obj`` from module ``m`` a Docile category ``cat`` or one of the 
 iscategory(m::Module, obj, cat::Symbol)          = Cache.getmeta(m, obj)[:category] == cat
 iscategory(m::Module, obj, cats::Vector{Symbol}) = Cache.getmeta(m, obj)[:category] in cats
 
+"""
+Is the docstring location of object ``obj`` from module ``m``` in one of the files ``files``.
+"""
+function isinfile(m::Module, obj, files::Vector)
+    textsource = Cache.getmeta(m, obj)[:textsource][2]
+    for f in files
+        endswith(textsource, f) && return true
+    end
+    false
+end
+
 end
